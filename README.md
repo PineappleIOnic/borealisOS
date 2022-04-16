@@ -30,6 +30,13 @@ We are not responsible for any device damage caused by using BorealisOS.
 
 </details>
 
+<h2>Notice</h2>
+BorealisOS is not nearly ready for any general use. It currently doesn't even have a working plugin system.
+
+The main goal right now is reverse engineering SteamOS and adding more features to BorealisOS.
+
+Eventually BorealisOS will have a full plugin system with a UI library and theme support.
+
 <h2>Installation</h2>
 BorealisOS is currently under heavy development and is not suggested for general use.
 
