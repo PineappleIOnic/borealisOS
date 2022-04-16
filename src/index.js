@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const BorealisUI = require('./libs/borealisUI');
+const HotReload = require('./libs/hotReload');
 
 function generateUILib(injector) {
     let BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"), 'borealisOS');
@@ -93,6 +94,10 @@ async function init() {
     logger.info('Injection finished. Starting communicator.');
 
     const communicator = new borealisCommunicator().init(injector);
+
+    if (process.argv.includes('--hot-reload')) {
+        const hotReload = new HotReload(injector);
+    }
 
     process.on('SIGINT', async function () {
         logger.info("Shutting down BorealisOS");

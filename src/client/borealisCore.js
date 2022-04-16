@@ -9,26 +9,26 @@ Borealis = class {
     constructor() {
         console.log('BorealisOS Client Initialised!')
 
-        // Attempt two way communication with borealis communicator
-        if (!window.borealisPush) {
-            console.log('Warning! Borealis Communicator is not yet ready!');
-            this.borealisReady = false;
-        } else {
-            window.borealisPush(this.hotloadScript);
-            this.borealisReady = true;
-        }
-
         // Create our hook functions.
 
         window.__BOREALIS__ = {};
         window.__BOREALIS__.COMMUNICATE = this.handleCommunication.bind(this);
         window.__BOREALIS__.quickAccessHook = this.quickAccessHook.bind(this);
+        window.__BOREALIS__.uninject = this.uninject.bind(this);
 
         this.reactHook = {};
 
-        // Wait until the page is finished loading so we can hook react.
-        window.onload = async () => {
-            await new Promise(resolve => setTimeout(resolve, 5000));
+        // Wait until webpack modules are loaded bebfore initialising hooks.
+        if (!window.SP_REACT) {
+            window.onload = async () => {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                window.__BOREALIS__.__REACTHOOK__ = {};
+                this.reactHook.backups = {
+                    createElement: window.SP_REACT.createElement
+                };
+                window.SP_REACT.createElement = this.createElement.bind(this);
+            }
+        } else {
             window.__BOREALIS__.__REACTHOOK__ = {};
             this.reactHook.backups = {
                 createElement: window.SP_REACT.createElement
@@ -71,7 +71,7 @@ Borealis = class {
             panel: this.renderJSX(`
 <div className="quickaccessmenu_TabGroupPanel_1QO7b Panel Focusable">
     <div className="quickaccesscontrols_PanelSection_Ob5uo">
-        <h2>Test</h2>
+        <h2>Test 65</h2>
     </div>
 </div>`),
             tab: this.renderJSX(`
@@ -87,6 +87,7 @@ Borealis = class {
 
     createElement() {
         const args = Array.prototype.slice.call(arguments);
+        const borealisUI = window.__BOREALISUI__;
 
         if (args[0] instanceof Function) {
             // Settings Hook
@@ -111,22 +112,22 @@ Borealis = class {
                     content: this.renderJSX(
                         `<div className="DialogBody">
                             <div className="
-                            ${window.__BOREALISUI__.libraryRoot.classes.Field} 
-                            ${window.__BOREALISUI__.libraryRoot.classes.WithFirstRow} 
-                            ${window.__BOREALISUI__.libraryRoot.classes.InlineWrapShiftsChildrenBelow} 
-                            ${window.__BOREALISUI__.libraryRoot.classes.WithBottomSeparator} 
-                            ${window.__BOREALISUI__.libraryRoot.classes.ChildrenWidthFixed} 
-                            ${window.__BOREALISUI__.libraryRoot.classes.ExtraPaddingOnChildrenBelow} 
-                            ${window.__BOREALISUI__.libraryRoot.classes.StandardPadding} 
-                            ${window.__BOREALISUI__.libraryRoot.classes.HighlightOnFocus} 
+                            ${borealisUI.libraryRoot.classes.Field} 
+                            ${borealisUI.libraryRoot.classes.WithFirstRow} 
+                            ${borealisUI.libraryRoot.classes.InlineWrapShiftsChildrenBelow} 
+                            ${borealisUI.libraryRoot.classes.WithBottomSeparator} 
+                            ${borealisUI.libraryRoot.classes.ChildrenWidthFixed} 
+                            ${borealisUI.libraryRoot.classes.ExtraPaddingOnChildrenBelow} 
+                            ${borealisUI.libraryRoot.classes.StandardPadding} 
+                            ${borealisUI.libraryRoot.classes.HighlightOnFocus} 
                             Panel Focusable">
-                                <div class="${window.__BOREALISUI__.libraryRoot.classes.FieldLabelRow}">
-                                    <div class="${window.__BOREALISUI__.libraryRoot.classes.FieldLabel}">
+                                <div class="${borealisUI.libraryRoot.classes.FieldLabelRow}">
+                                    <div class="${borealisUI.libraryRoot.classes.FieldLabel}">
                                         Current Theme
                                     </div>
-                                    <div class="${window.__BOREALISUI__.libraryRoot.classes.FieldChildren}">
-                                        <button class="${window.__BOREALISUI__.libraryRoot.classes.DropDownControlButton} DialogButton _DialogLayout Secondary basicdialog_Button_1Ievp Focusable gpfocus gpfocuswithin">
-                                            <div class="${window.__BOREALISUI__.libraryRoot.classes.DropDownControlButtonContents}">
+                                    <div class="${borealisUI.libraryRoot.classes.FieldChildren}">
+                                        <button class="${borealisUI.libraryRoot.classes.DropDownControlButton} DialogButton _DialogLayout Secondary basicdialog_Button_1Ievp Focusable gpfocus gpfocuswithin">
+                                            <div class="${borealisUI.libraryRoot.classes.DropDownControlButtonContents}">
                                                 <div class="DialogDropDown_CurrentDisplay">Default (SteamOS Holo)</div>
                                                 <div class="basicdialog_Spacer_1wB2e"></div>
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none"><path d="M17.98 26.54L3.20996 11.77H32.75L17.98 26.54Z" fill="currentColor"></path></svg>
@@ -135,12 +136,6 @@ Borealis = class {
                                     </div>
                                 </div>
                             </div>
-                            <select name="cars" id="cars">
-  <option value="volvo">Volvo</option>
-  <option value="saab">Saab</option>
-  <option value="mercedes">Mercedes</option>
-  <option value="audi">Audi</option>
-</select>
                         </div>`
                     )
                 })
@@ -152,6 +147,15 @@ Borealis = class {
         }
 
         return this.reactHook.backups.createElement.apply(window.SP_REACT, args);
+    }
+
+    uninject() {
+        // Rollback React Hooks
+        window.SP_REACT.createElement = this.reactHook.backups.createElement
+
+        // Rewrite dirty hooks to do nothing, we can't remove them or else SteamOS crashes.
+        window.__BOREALIS__.quickAccessHook = () => {}
+        window.__BOREALIS__.COMMUNICATE = () => {}
     }
 }
 
