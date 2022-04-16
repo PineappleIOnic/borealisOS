@@ -1,3 +1,4 @@
+<img width="100px" src="./assets/lambda.png" align="center"></img>
 <h1 align="center">BorealisOS</h1>
 <p align="center">A SteamOS 3.0 plugin and customisation framework built using NodeJS.</p>
 
