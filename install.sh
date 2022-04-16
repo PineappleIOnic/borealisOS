@@ -1,6 +1,16 @@
 #!/bin/sh
 
-echo "BorealisOS Installer"
+echo "  ____                       _ _      ____   _____ ";
+echo " |  _ \                     | (_)    / __ \ / ____|";
+echo " | |_) | ___  _ __ ___  __ _| |_ ___| |  | | (___  ";
+echo " |  _ < / _ \| '__/ _ \/ _\` | | / __| |  | |\___ \ ";
+echo " | |_) | (_) | | |  __/ (_| | | \__ \ |__| |____) |";
+echo " |____/ \___/|_|  \___|\__,_|_|_|___/\____/|_____/ ";
+echo "                                                   ";
+echo "A SteamOS 3.0 plugin and customisation framework built using NodeJS. ";
+echo
+echo
+echo
 
 # Clean Previous installation
 rm -r ~/.local/share/borealisOS/
@@ -33,3 +43,5 @@ chmod +x ~/bin/borealisOS
 
 # Add to $PATH
 echo "export PATH=\$PATH:~/bin # Added by BorealisOS" >> ~/.bashrc
+
+echo "BorealisOS was successfully installed! You can now run BorealisOS by typing 'borealisOS' in your terminal while Gaming mode is active."
