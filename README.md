@@ -31,41 +31,18 @@ We are not responsible for any device damage caused by using BorealisOS.
 </details>
 
 <h2>Installation</h2>
-BorealisOS is currently only usable for advanced users with both their steamOS system parition unlocked and SSH enabled and setup.
+BorealisOS is currently under heavy development and is not suggested for general use.
 
-You will also need to enable developer mode on your SteamDeck and enable it's CEF Debugging option in the developer settings.
+__BorealisOS requires CEF Debugging to be enabled within the Developer settings__
 
-As we continue development these two requirements will eventually be removed.
+If you still want to install BorealisOS, you can do so by running the following command:
 
-BorealisOS is currently early days and requires you to unlock your system partition using:
-```
-sudo steamos-readonly disable
-```
-then to install NodeJS, we currently recommend using [n](https://github.com/tj/n)
-```
-curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
-bash n lts
-```
-Also install git:
-```
-sudo pacman -S git
+```sh
+curl -L https://github.com/PineappleIOnic/BorealisOS/raw/main/install.sh | sh
 ```
 
-Next clone the BorealisOS repository
-```
-git clone https://github.com/PineappleIOnic/borealisOS.git
-```
-
-Then change directory to borealisOS and install it's dependencies
-```
-cd borealisOS
-npm install
-```
-finally to launch BorealisOS run:
-```
-node src/index.js
-```
-This will hook steamOS and patch the required files installing BorealisOS. This is temporary and all patches will be removed on either closure of BorealisOS or restarting the steam client.
+Once BorealisOS is installed it can be run by __SSHing into the device while gaming mode is running__ and running the `borealisOS` command.
+This will hook steamOS and patch it to use BorealisOS. All changes are temporary and BorealisOS will rollback any changes on exit and reload steam.
 
 ## Developing
 We recommend having [VSCode's Remote Explorer extension](https://code.visualstudio.com/docs/remote/ssh) for developing BorealisOS on SteamDeck hardware.
