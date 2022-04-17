@@ -1,10 +1,10 @@
 const BorealisPatch = require('../borealisPatch');
 const fs = require('fs');
 
-module.exports = class spPatch extends BorealisPatch {
+module.exports = class QuickAccessPatch extends BorealisPatch {
     constructor() {
         super();
-        this.name = 'spPatch';
+        this.name = 'QuickAccessPatch';
         this.patchFiles = [
             'steamui/sp.js'
         ];

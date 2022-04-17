@@ -1,0 +1,35 @@
+/* A tiny version of borealisCore used mainly for theme injection on non-SP tabs */
+
+if (window.Borealis) {
+    window.Borealis.uninject();
+}
+
+Borealis = class {
+    constructor() {
+        console.log('BorealisT Client Initialised!')
+    }
+
+    setTheme(style) {
+        // Check if we already have a theme enabled.
+        if (document.getElementById("borealis_theme")) {
+            document.getElementById("borealis_theme").innerHTML = style
+        } else {
+            var themeElement = document.createElement('style');
+            themeElement.id = "borealis_theme"
+            themeElement.innerHTML = style
+            document.body.appendChild(themeElement);
+        }
+    }
+
+    removeTheme() {
+        if (document.getElementById("borealis_theme")) {
+            document.getElementById("borealis_theme").remove();
+        }
+    }
+
+    uninject() {
+        this.removeTheme();
+    }
+}
+
+window.Borealis = new Borealis();

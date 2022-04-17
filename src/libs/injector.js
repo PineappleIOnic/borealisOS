@@ -5,6 +5,7 @@ const axios = require('axios').default;
 const logger = require('./log');
 const path = require('path');
 const fs = require('fs');
+const { resolve } = require('path');
 
 module.exports = class borealisInjector {
     constructor() {
@@ -21,9 +22,9 @@ module.exports = class borealisInjector {
             'C:/Program Files (x86)/Steam/',
             '/home/deck/.steam/steam'
         ]
-    
+
         let detectedLocation = false;
-    
+
         // Check all locations
         locations.forEach(element => {
             try {
@@ -41,23 +42,56 @@ module.exports = class borealisInjector {
 
     async getCEFData() {
         for (let i = 0; i < 4; i++) {
-            this.log.info(`Attempting to get CEF Data, Attempt ${i + 1} of 5`)
-    
-            let response = await axios.get("http://localhost:8080/json/version", {validateStatus: () => true}).then(
+            let response = await axios.get("http://localhost:8080/json/version", { validateStatus: () => true }).then(
                 data => data.data
             ).catch((err) => {
                 this.log.warning('Something went wrong attempt to contact debugger, retrying in 5 seconds...');
                 return false;
             });
-    
+
             if (response !== false) {
                 return response
             } else {
                 await new Promise(resolve => setTimeout(resolve, 5000));
             }
         }
-    
+
         throw new Error('Failed to get CEF Data after 5 tries. Not attempting again.');
+    }
+
+    async refreshInstances() {
+        let cefdata = await this.getCEFData();
+
+        // Hook Browser Instance
+
+        for (let i = 0; i < 5; i++) {
+            let connectSuccess = await puppeteer.connect({
+                browserWSEndpoint: cefdata.webSocketDebuggerUrl,
+                defaultViewport: null
+            }).then((instance) => {
+                this.browserInstance = instance;
+                return true;
+            }).catch((err) => {
+                this.log.warning('Failed to hook CEF, waiting 5 seconds then trying again.');
+                return false;
+            })
+
+            if (connectSuccess) {
+                break;
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+        }
+
+        let pages = await this.browserInstance.pages();
+        this.instance = {};
+
+        await Promise.all(pages.map(async (page) => {
+            let title = await page.title();
+            if (title !== null && title !== '') {
+                this.instance[title] = page;
+            }
+        }))
     }
 
     loadPatchFiles() {
@@ -136,16 +170,21 @@ module.exports = class borealisInjector {
         }
 
         let pages = await this.browserInstance.pages();
-        this.instance = null;
+        this.instance = {};
 
         await Promise.all(pages.map(async (page) => {
             let title = await page.title();
-            if (title !== 'SP') {
-                return;
+            if (title === 'SP') {
+                await page.reload();
+                this.log.info('Finished All Stages, BorealisOS is loaded.');
+                this.instance.SP = page;
+            } else {
+                // Manually inject borealisCore into non main pages.
+                if (title !== null && title !== '') {
+                    page.addScriptTag({ path: resolve(steamInstall, 'steamui/borealis/borealisCore.js') })
+                    this.instance[title] = page;
+                }
             }
-            await page.reload();
-            this.log.info('Finished All Stages, BorealisOS is loaded.');
-            this.instance = page;
         }));
     }
 
@@ -156,7 +195,7 @@ module.exports = class borealisInjector {
             this.log.info('Restored original file: ' + file.directory);
         })
 
-        this.instance.reload();
+        this.instance.SP.reload();
     }
 }
 

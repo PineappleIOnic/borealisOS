@@ -18,6 +18,8 @@ Borealis = class {
 
         this.reactHook = {};
 
+        this.serverData = {};
+
         // Wait until webpack modules are loaded bebfore initialising hooks.
         if (!window.SP_REACT) {
             window.onload = async () => {
@@ -35,6 +37,13 @@ Borealis = class {
             };
             window.SP_REACT.createElement = this.createElement.bind(this);
         }
+
+        // Because functions connecting to the borealis server are asyncronous we'll just poll most the data and keep an update version of it.
+        // That way syncronous hooks can use it.
+
+        this.serverPoll = setTimeout(this.pollServer.bind(this), 3000);
+
+        window.onload = this.serverPoll.bind(this);
     }
 
     // Convert SteamUI Classes into Borealis ones.
@@ -53,6 +62,16 @@ Borealis = class {
         })
 
         return result;
+    }
+
+    async pollServer() {
+        console.log('Polling server.')
+        this.serverData = {
+            currentTheme: await window.borealisPush("currentTheme"),
+            availableThemes:await window.borealisPush("getThemes")
+        }
+
+        this.serverPoll();
     }
 
     handleCommunication(data) {
@@ -149,13 +168,34 @@ Borealis = class {
         return this.reactHook.backups.createElement.apply(window.SP_REACT, args);
     }
 
+    setTheme(style) {
+        // Check if we already have a theme enabled.
+        if (document.getElementById("borealis_theme")) {
+            document.getElementById("borealis_theme").innerHTML = style
+        } else {
+            var themeElement = document.createElement('style');
+            themeElement.id = "borealis_theme"
+            themeElement.innerHTML = style
+            document.body.appendChild(themeElement);
+        }
+    }
+
+    removeTheme() {
+        if (document.getElementById("borealis_theme")) {
+            document.getElementById("borealis_theme").remove();
+        }
+    }
+
     uninject() {
         // Rollback React Hooks
         window.SP_REACT.createElement = this.reactHook.backups.createElement
+        this.removeTheme();
 
         // Rewrite dirty hooks to do nothing, we can't remove them or else SteamOS crashes.
         window.__BOREALIS__.quickAccessHook = () => {}
         window.__BOREALIS__.COMMUNICATE = () => {}
+
+        clearTimeout(this.serverPoll);
     }
 }
 

@@ -2,7 +2,7 @@ const BorealisPatch = require('../borealisPatch');
 const fs = require('fs');
 const path = require('path');
 
-module.exports = class corePatch extends BorealisPatch {
+module.exports = class CorePatch extends BorealisPatch {
     constructor() {
         super();
         this.name = 'corePatch';

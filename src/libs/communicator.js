@@ -2,8 +2,8 @@ const logger = new (require('./log'))('communicator');
 
 module.exports = class borealisCommunicator {
     init(injector) {
-        injector.instance.exposeFunction('borealisPush', (event, data)  => {
-            this.recieveData(event, data)
+        injector.instance.SP.exposeFunction('borealisPush', (event, data) => {
+            return this.recieveData(event, data);
         })
 
         this.messageHooks = {};
@@ -15,7 +15,7 @@ module.exports = class borealisCommunicator {
         if (event) {
             for (const hook in this.messageHooks) {
                 if (event === hook) {
-                    this.messageHooks[hook](data)
+                    return this.messageHooks[hook](data)
                 }
             }
         } else {
