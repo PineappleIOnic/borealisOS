@@ -10,7 +10,6 @@ Borealis = class {
         console.log('BorealisOS Client Initialised!')
 
         // Create our hook functions.
-
         window.__BOREALIS__ = {};
         window.__BOREALIS__.COMMUNICATE = this.handleCommunication.bind(this);
         window.__BOREALIS__.quickAccessHook = this.quickAccessHook.bind(this);
@@ -38,12 +37,17 @@ Borealis = class {
             window.SP_REACT.createElement = this.createElement.bind(this);
         }
 
-        // Because functions connecting to the borealis server are asyncronous we'll just poll most the data and keep an update version of it.
-        // That way syncronous hooks can use it.
+        this.communicatorOnline = false;
+    }
 
-        this.serverPoll = setTimeout(this.pollServer.bind(this), 3000);
+    async setCommunicatorOnline() {
+        this.communicatorOnline = true;
 
-        window.onload = this.serverPoll.bind(this);
+        let theme = await window.borealisPush("currentTheme");
+
+        if (theme.name !== "Default") {
+            this.setTheme(theme.content)
+        }
     }
 
     // Convert SteamUI Classes into Borealis ones.
@@ -68,7 +72,7 @@ Borealis = class {
         console.log('Polling server.')
         this.serverData = {
             currentTheme: await window.borealisPush("currentTheme"),
-            availableThemes:await window.borealisPush("getThemes")
+            availableThemes: await window.borealisPush("getThemes")
         }
 
         this.serverPoll();
@@ -117,6 +121,8 @@ Borealis = class {
 
                 args[2].props.pages.push("separator");
 
+                console.log(args);
+
                 args[2].props.pages.push({
                     visible: true,
                     title: "BorealisOS",
@@ -128,41 +134,55 @@ Borealis = class {
          </g>
         </svg>`),
                     route: "/settings/borealisOS",
-                    content: this.renderJSX(
-                        `<div className="DialogBody">
-                            <div className="
-                            ${borealisUI.libraryRoot.classes.Field} 
-                            ${borealisUI.libraryRoot.classes.WithFirstRow} 
-                            ${borealisUI.libraryRoot.classes.InlineWrapShiftsChildrenBelow} 
-                            ${borealisUI.libraryRoot.classes.WithBottomSeparator} 
-                            ${borealisUI.libraryRoot.classes.ChildrenWidthFixed} 
-                            ${borealisUI.libraryRoot.classes.ExtraPaddingOnChildrenBelow} 
-                            ${borealisUI.libraryRoot.classes.StandardPadding} 
-                            ${borealisUI.libraryRoot.classes.HighlightOnFocus} 
-                            Panel Focusable">
-                                <div class="${borealisUI.libraryRoot.classes.FieldLabelRow}">
-                                    <div class="${borealisUI.libraryRoot.classes.FieldLabel}">
-                                        Current Theme
-                                    </div>
-                                    <div class="${borealisUI.libraryRoot.classes.FieldChildren}">
-                                        <button class="${borealisUI.libraryRoot.classes.DropDownControlButton} DialogButton _DialogLayout Secondary basicdialog_Button_1Ievp Focusable gpfocus gpfocuswithin">
-                                            <div class="${borealisUI.libraryRoot.classes.DropDownControlButtonContents}">
-                                                <div class="DialogDropDown_CurrentDisplay">Default (SteamOS Holo)</div>
-                                                <div class="basicdialog_Spacer_1wB2e"></div>
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none"><path d="M17.98 26.54L3.20996 11.77H32.75L17.98 26.54Z" fill="currentColor"></path></svg>
-                                            </div>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`
-                    )
+                //     content: this.renderJSX(
+                //         `<div className="DialogBody">
+                //             <div className="
+                //             ${borealisUI.libraryRoot.classes.Field} 
+                //             ${borealisUI.libraryRoot.classes.WithFirstRow} 
+                //             ${borealisUI.libraryRoot.classes.InlineWrapShiftsChildrenBelow} 
+                //             ${borealisUI.libraryRoot.classes.WithBottomSeparator} 
+                //             ${borealisUI.libraryRoot.classes.ChildrenWidthFixed} 
+                //             ${borealisUI.libraryRoot.classes.ExtraPaddingOnChildrenBelow} 
+                //             ${borealisUI.libraryRoot.classes.StandardPadding} 
+                //             ${borealisUI.libraryRoot.classes.HighlightOnFocus} 
+                //             Panel Focusable">
+                //                 <div class="${borealisUI.libraryRoot.classes.FieldLabelRow}">
+                //                     <div class="${borealisUI.libraryRoot.classes.FieldLabel}">
+                //                         Current Theme
+                //                     </div>
+                //                     <div class="${borealisUI.libraryRoot.classes.FieldChildren}">
+                //                         <button class="${borealisUI.libraryRoot.classes.DropDownControlButton} DialogButton _DialogLayout Secondary basicdialog_Button_1Ievp Focusable gpfocus gpfocuswithin">
+                //                             <div class="${borealisUI.libraryRoot.classes.DropDownControlButtonContents}">
+                //                                 <div class="DialogDropDown_CurrentDisplay">Default (SteamOS Holo)</div>
+                //                                 <div class="basicdialog_Spacer_1wB2e"></div>
+                //                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none"><path d="M17.98 26.54L3.20996 11.77H32.75L17.98 26.54Z" fill="currentColor"></path></svg>
+                //                             </div>
+                //                         </button>
+                //                     </div>
+                //                 </div>
+                //             </div>
+                //         </div>`
+                //     )
+                content: React.createElement(this.renderJSX(`
+                React.forwardRef((props, ref) =>
+                    (
+                        <div ref={ref} focusable={true} noFocusRing={false} focusClassName="gpfocus">
+                            <h2>Borealis Experiments</h2>
+
+                            <button focusable={true} noFocusRing={false} focusClassName="gpfocus">
+                            </button>
+                        </div>
+                  ))`))
                 })
             }
 
             if (args[0].toString().includes("RemotePlayTogetherControls")) {
                 console.log(args);
             }
+
+            // if (args[0].toString().includes('focusable')) {
+            //     console.log(args);
+            // }
         }
 
         return this.reactHook.backups.createElement.apply(window.SP_REACT, args);
@@ -192,10 +212,8 @@ Borealis = class {
         this.removeTheme();
 
         // Rewrite dirty hooks to do nothing, we can't remove them or else SteamOS crashes.
-        window.__BOREALIS__.quickAccessHook = () => {}
-        window.__BOREALIS__.COMMUNICATE = () => {}
-
-        clearTimeout(this.serverPoll);
+        window.__BOREALIS__.quickAccessHook = () => { }
+        window.__BOREALIS__.COMMUNICATE = () => { }
     }
 }
 

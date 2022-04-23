@@ -7,6 +7,18 @@ if (window.Borealis) {
 Borealis = class {
     constructor() {
         console.log('BorealisT Client Initialised!')
+
+        this.communicatorOnline = false;
+    }
+
+    async setCommunicatorOnline() {
+        this.communicatorOnline = true;
+
+        let theme = await window.borealisPush("currentTheme");
+
+        if (theme.name !== "Default") {
+            this.setTheme(theme.content)
+        }
     }
 
     setTheme(style) {

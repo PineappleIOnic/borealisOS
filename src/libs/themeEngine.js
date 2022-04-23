@@ -46,7 +46,7 @@ module.exports = class ThemeEngine {
                 try {
                     fs.accessSync(resolve(resolve('./themes'), file, 'theme.css'))
 
-                    allThemes[file] = 
+                    allThemes[meta.name] =
                     {
                         contents: fs.readFileSync(resolve(resolve('./themes'), file, 'theme.css')).toString(),
                         meta: meta
@@ -66,7 +66,9 @@ module.exports = class ThemeEngine {
 
         communicator.registerEventHook("setTheme", this.selectTheme.bind(this));
         communicator.registerEventHook("getThemes", () => this.themes);
-        communicator.registerEventHook("currentTheme", () => this.keystore.readKey('currentTheme') || 'default');
+        communicator.registerEventHook("currentTheme", () => { return {
+            name: this.keystore.readKey('currentTheme') || 'default', 
+            content: this.keystore.readKey('currentTheme') ? this.themes[this.keystore.readKey('currentTheme')].contents : ''}});
 
         if (this.keystore.readKey('currentTheme')) {
             this.selectTheme(this.keystore.readKey('currentTheme'))
@@ -91,11 +93,11 @@ module.exports = class ThemeEngine {
 
         // Next load the theme into all instances.
         for (let page in this.injector.instance) {
-            this.injector.instance[page].addScriptTag({ content: "window.Borealis.setTheme(`" +theme.contents + "`);" })
+            this.injector.instance[page].addScriptTag({ content: "window.Borealis.setTheme(`" + theme.contents + "`);" })
         }
 
         if (this.keystore.readKey('currentTheme') !== name) {
-            this.keystore.setKey('currentTheme', name);
+            this.keystore.writeKey('currentTheme', name);
         }
     }
 }
