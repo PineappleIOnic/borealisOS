@@ -29,8 +29,8 @@ module.exports = class borealisInjector {
         locations.forEach(element => {
             try {
                 fs.accessSync(element)
-                fs.accessSync(path.resolve(element, 'steamui/sp.js'));
-                fs.accessSync(path.resolve(element, 'steamui/libraryroot~sp.js'));
+                fs.accessSync(resolve(element, 'steamui/sp.js'));
+                fs.accessSync(resolve(element, 'steamui/libraryroot~sp.js'));
                 detectedLocation = element;
             } catch (err) {
                 return;
@@ -100,7 +100,7 @@ module.exports = class borealisInjector {
             if (!file.endsWith('.js')) {
                 return;
             } else {
-                this.patches.push(new (require(path.resolve('./src/patches/', file)))());
+                this.patches.push(new (require(resolve('./src/patches/', file)))());
             }
         })
     }
@@ -108,7 +108,7 @@ module.exports = class borealisInjector {
     patchFile(file, steamInstall) {
         this.patches.forEach(patch => {
             patch.getPatchFiles().forEach(patchFile => {
-                if (file.endsWith(patchFile)) {
+                if (file.replace(/\\/g, '/').endsWith(patchFile)) {
                     patch.patch(file, steamInstall);
                 }
             })
@@ -125,12 +125,12 @@ module.exports = class borealisInjector {
 
         this.filesToPatch.forEach(file => {
             this.backups.push({
-                directory: path.resolve(steamInstall, file),
-                content: fs.readFileSync(path.resolve(steamInstall, file))
+                directory: resolve(steamInstall, file),
+                content: fs.readFileSync(resolve(steamInstall, file))
             });
 
             this.log.info('Patching File: ' + file);
-            this.patchFile(path.resolve(steamInstall, file), steamInstall);
+            this.patchFile(resolve(steamInstall, file), steamInstall);
         })
 
 
@@ -181,7 +181,7 @@ module.exports = class borealisInjector {
             } else {
                 // Manually inject borealisCore into non main pages.
                 if (title !== null && title !== '') {
-                    page.addScriptTag({ path: resolve(steamInstall, 'steamui/borealis/borealisCore.js') })
+                    page.addScriptTag({ path: resolve('src/client/borealisCore.js') })
                     this.instance[title] = page;
                 }
             }
@@ -201,9 +201,14 @@ module.exports = class borealisInjector {
 
 // Check if steam is running
 const isSteamRunning = async () => {
-    let command = `pgrep steamwebhelper`;
+    switch (process.platform) {
+        case 'win32': command = 'tasklist'; break;
+        case 'darwin': command = 'ps -ax | grep steamwebhelper'; break;
+        case 'linux': command = 'ps -ax | grep steamwebhelper'; break;
+        default: break;
+    }
     let response = await exec(command);
-    if (response.stdout.length !== 0) {
+    if (response.stdout.toLowerCase().includes('steamwebhelper')) {
         return true
     }
 }

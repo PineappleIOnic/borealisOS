@@ -27,12 +27,12 @@ module.exports = class CorePatch extends BorealisPatch {
         let fileData = fs.readFileSync(file);
 
         if (!fs.existsSync(path.resolve(steamInstall, 'steamui') + '/borealis')) {
-            fs.mkdirSync(path.resolve(steamInstall, 'steamui') + '/borealis');
+            fs.mkdirSync(path.resolve(steamInstall, 'steamui') + '/borealis', { recursive: true });
         }
 
         let devtools = fs.createWriteStream(path.resolve(steamInstall, 'steamui') + '/borealis/devtools.js');
         let promise = new Promise((resolve, reject) => {
-            const request = http.get("http://192.168.0.61:8097", function (response) {
+            const request = http.get("http://localhost:8097", function (response) {
                 response.pipe(devtools);
     
                 // after download completed close filestream

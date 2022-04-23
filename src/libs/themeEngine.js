@@ -11,7 +11,7 @@ module.exports = class ThemeEngine {
         try {
             fs.accessSync(resolve('./themes'))
         } catch {
-            fs.mkdirSync(resolve('./themes'));
+            fs.mkdirSync(resolve('./themes', { recursive: true }));
             return;
         }
 

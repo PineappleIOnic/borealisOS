@@ -25,8 +25,8 @@ module.exports = class CorePatch extends BorealisPatch {
             return;
         }
 
-        if (!fs.existsSync(path.resolve(steamInstall, 'steamui') + '/borealis')) {
-            fs.mkdirSync(path.resolve(steamInstall, 'steamui') + '/borealis');
+        if (!fs.existsSync(path.resolve(steamInstall, 'steamui/borealis'))) {
+            fs.mkdirSync(path.resolve(steamInstall, 'steamui/borealis', { recursive: true }));
         }
 
         fs.copyFileSync(path.resolve('./src/client/borealisCore.js'), path.resolve(steamInstall, 'steamui/borealis/borealisCore.js'));

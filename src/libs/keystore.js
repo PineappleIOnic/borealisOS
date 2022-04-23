@@ -12,7 +12,7 @@ module.exports = class Keystore {
         this.path = resolve(BorealisAppdata, 'borealisData.json');
 
         if (!fs.existsSync(BorealisAppdata)) {
-            fs.mkdirSync(BorealisAppdata);
+            fs.mkdirSync(BorealisAppdata, { recursive: true });
             fs.writeFileSync(this.path, JSON.stringify({}));
         } else {
             try {

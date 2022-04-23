@@ -19,7 +19,7 @@ module.exports = class LibRootPatch extends BorealisPatch {
         let fileData = fs.readFileSync(file);
 
         if (!fs.existsSync(path.resolve(steamInstall, 'steamui') + '/borealis')) {
-            fs.mkdirSync(path.resolve(steamInstall, 'steamui') + '/borealis');
+            fs.mkdirSync(path.resolve(steamInstall, 'steamui') + '/borealis', { recursive: true });
         }
 
         fs.copyFileSync(path.resolve('./src/client/borealisTiny.js'), path.resolve(steamInstall, 'steamui/borealis/borealisTiny.js'));
