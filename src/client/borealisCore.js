@@ -154,12 +154,12 @@ Borealis = class {
                 (props) => {
                     const [themes, setThemes] = React.useState({});
                     const [currentTheme, setCurrentTheme] = React.useState("Default (SteamOS Holo)");
-                    const [showInitialWarning, setShowInitialWarning] = React.useState(false);
+                    const [showInitialWarning, setShowInitialWarning] = React.useState(true);
 
                     React.useEffect(async () => {
                         // Use localStorage to remember if the user has already been warned.
-                        if (localStorage.getItem("borealisOS_initialWarning") === null) {
-                            setShowInitialWarning(true);
+                        if (localStorage.getItem("borealisOS_initialWarning") === "true") {
+                            setShowInitialWarning(false);
                         }
 
                         // Fetch current themes from communicator.
@@ -181,7 +181,7 @@ Borealis = class {
 
                     const handleWarningClose = () => {
                         setShowInitialWarning(false);
-                        localStorage.setItem("borealisOS_initialWarning", true);
+                        localStorage.setItem("borealisOS_initialWarning", "true");
                     }
 
                     return (
@@ -191,6 +191,9 @@ Borealis = class {
                                 <p style={{ fontWeight: "100", marginTop: "0px", fontSize: "15px" }}>SteamOS 3.0 plugin and customization framework</p>
                             </div>
 
+
+                            {
+                                showInitialWarning &&
                             <div
                             style={{
                               textAlign: "justify",
@@ -209,10 +212,11 @@ Borealis = class {
                               with the touch screen for now.
                             </p>
 
-                            <button onclick={handleWarningClose} class="DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable">
-                                Ok, I understand.
-                            </button>
+                                <button onClick={handleWarningClose} class="DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable">
+                                    Ok, I understand.
+                                </button>
                           </div>
+                          }
 
                           <div className="DialogControlsSectionHeader">Plugins</div>
 
