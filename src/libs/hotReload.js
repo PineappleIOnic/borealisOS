@@ -39,6 +39,9 @@ module.exports = class HotReload {
             this.injector.instance.SP.addScriptTag({ content: "window.__BOREALIS__.uninject();" })
             this.injector.instance.SP.addScriptTag({ path: path });
         } else if (type === 'theme' && event === 'change') {
+            return;
+            // TODO: Throw this to the theme engine instead.
+
             logger.info('Reloading theme: ' + path);
             let themeCSS = readFileSync(path);
             // Also inject theme on non-SP pages

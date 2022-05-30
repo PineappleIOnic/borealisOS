@@ -65,10 +65,10 @@ module.exports = class ThemeEngine {
         this.injector = injectorInstance;
 
         communicator.registerEventHook("setTheme", this.selectTheme.bind(this));
-        communicator.registerEventHook("getThemes", () => this.themes);
+        communicator.registerEventHook("getThemes", () => {return this.themes});
         communicator.registerEventHook("currentTheme", () => { return {
-            name: this.keystore.readKey('currentTheme') || 'default', 
-            content: this.keystore.readKey('currentTheme') ? this.themes[this.keystore.readKey('currentTheme')].contents : ''}});
+            name: this.keystore.readKey('currentTheme') || 'Default (SteamOS Holo)', 
+            content: this.keystore.readKey('currentTheme') && this.themes[this.keystore.readKey('currentTheme')] ? this.themes[this.keystore.readKey('currentTheme')].contents : ''}});
 
         if (this.keystore.readKey('currentTheme')) {
             this.selectTheme(this.keystore.readKey('currentTheme'))

@@ -16,7 +16,7 @@ Borealis = class {
 
         let theme = await window.borealisPush("currentTheme");
 
-        if (theme.name !== "Default") {
+        if (theme.name !== "Default (SteamOS Holo)") {
             this.setTheme(theme.content)
         }
     }
