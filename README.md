@@ -48,3 +48,7 @@ This will hook steamOS and patch it to use BorealisOS. All changes are temporary
 We recommend having [VSCode's Remote Explorer extension](https://code.visualstudio.com/docs/remote/ssh) for developing BorealisOS on SteamDeck hardware.
 
 You can also develop on the PUBLIC-PAL build of Steam if you like to keep everything local or don't have a SteamDeck to develop on.
+
+<p align="center">
+<img height="500px" src="./assets/settingsPage.jpg" align="center"></img>
+</p>
