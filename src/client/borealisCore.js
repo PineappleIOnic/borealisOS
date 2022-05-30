@@ -150,41 +150,18 @@ Borealis = class {
          </g>
         </svg>`),
                     route: "/settings/borealisOS",
-                //     content: this.renderJSX(
-                //         `<div className="DialogBody">
-                //             <div className="
-                //             ${borealisUI.libraryRoot.classes.Field} 
-                //             ${borealisUI.libraryRoot.classes.WithFirstRow} 
-                //             ${borealisUI.libraryRoot.classes.InlineWrapShiftsChildrenBelow} 
-                //             ${borealisUI.libraryRoot.classes.WithBottomSeparator} 
-                //             ${borealisUI.libraryRoot.classes.ChildrenWidthFixed} 
-                //             ${borealisUI.libraryRoot.classes.ExtraPaddingOnChildrenBelow} 
-                //             ${borealisUI.libraryRoot.classes.StandardPadding} 
-                //             ${borealisUI.libraryRoot.classes.HighlightOnFocus} 
-                //             Panel Focusable">
-                //                 <div class="${borealisUI.libraryRoot.classes.FieldLabelRow}">
-                //                     <div class="${borealisUI.libraryRoot.classes.FieldLabel}">
-                //                         Current Theme
-                //                     </div>
-                //                     <div class="${borealisUI.libraryRoot.classes.FieldChildren}">
-                //                         <button class="${borealisUI.libraryRoot.classes.DropDownControlButton} DialogButton _DialogLayout Secondary basicdialog_Button_1Ievp Focusable gpfocus gpfocuswithin">
-                //                             <div class="${borealisUI.libraryRoot.classes.DropDownControlButtonContents}">
-                //                                 <div class="DialogDropDown_CurrentDisplay">Default (SteamOS Holo)</div>
-                //                                 <div class="basicdialog_Spacer_1wB2e"></div>
-                //                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none"><path d="M17.98 26.54L3.20996 11.77H32.75L17.98 26.54Z" fill="currentColor"></path></svg>
-                //                             </div>
-                //                         </button>
-                //                     </div>
-                //                 </div>
-                //             </div>
-                //         </div>`
-                //     )
                 content: React.createElement(this.renderJSX(`
                 (props) => {
                     const [themes, setThemes] = React.useState({});
                     const [currentTheme, setCurrentTheme] = React.useState("Default (SteamOS Holo)");
+                    const [showInitialWarning, setShowInitialWarning] = React.useState(false);
 
                     React.useEffect(async () => {
+                        // Use localStorage to remember if the user has already been warned.
+                        if (localStorage.getItem("borealisOS_initialWarning") === null) {
+                            setShowInitialWarning(true);
+                        }
+
                         // Fetch current themes from communicator.
                         window.borealisPush('getThemes').then(data => {
                             setThemes({default: {contents: "", meta: {name: "Default (SteamOS Holo)", author: "Valve"}}, ...data});
@@ -197,17 +174,21 @@ Borealis = class {
                     }, []);
 
                     const handleThemeChange = (theme) => {
-                        console.log(theme);
                         window.borealisPush('setTheme', theme).then(data => {
                             setCurrentTheme(theme);
                         })
                     }
 
+                    const handleWarningClose = () => {
+                        setShowInitialWarning(false);
+                        localStorage.setItem("borealisOS_initialWarning", true);
+                    }
+
                     return (
                         <div class="borealis_settings">
                             <div style={{textAlign: "center"}}>
-                                <h1 style={{ marginBottom: "-15px", fontSize: "50px", fontWeight: "100" }}>Borealis<span style={{ fontWeight: "500", marginBottom: "0px", position: "relative" }}>OS<span class="version" style={{position: "absolute", left: "95%", top: "0px", fontSize: "10px"}}>indev</span></span></h1>
-                                <p style={{ fontWeight: "100", marginTop: "0px", fontSize: "10px" }}>SteamOS 3.0 plugin and customization framework</p>
+                                <h1 style={{ marginBottom: "-15px", fontSize: "65px", fontWeight: "100", marginTop: "0px" }}>Borealis<span style={{ fontWeight: "500", marginBottom: "0px", position: "relative" }}>OS<span class="version" style={{position: "absolute", left: "95%", top: "0px", fontSize: "13px"}}>indev</span></span></h1>
+                                <p style={{ fontWeight: "100", marginTop: "0px", fontSize: "15px" }}>SteamOS 3.0 plugin and customization framework</p>
                             </div>
 
                             <div
@@ -227,6 +208,10 @@ Borealis = class {
                               system. This means that all Borealis Menus and UI will only work
                               with the touch screen for now.
                             </p>
+
+                            <button onclick={handleWarningClose} class="DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable">
+                                Ok, I understand.
+                            </button>
                           </div>
 
                           <div className="DialogControlsSectionHeader">Plugins</div>
