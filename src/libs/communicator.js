@@ -6,15 +6,6 @@ module.exports = class borealisCommunicator {
         this.knownInstances = [];
         await injector.refreshInstances();
         this.injector = injector;
-
-        for (let page in injector.instance) {
-            injector.instance[page].exposeFunction(`borealisPush`, (event, data) => {
-                return this.recieveData(event, data);
-            })
-            injector.instance[page].addScriptTag({ content: "window.Borealis.setCommunicatorOnline()" })
-
-            this.knownInstances.push(page);
-        }
     }
 
     async recieveData(event, data) {
@@ -42,6 +33,27 @@ module.exports = class borealisCommunicator {
             }
         } else {
             logger.warning('Recieved message without event.')
+        }
+    }
+
+    async send(event, data) {
+        // Only send to SP
+        await this.injector.refreshInstances();
+
+        if (this.injector.instance['SP']) {
+            this.injector.instance['SP'].addScriptTag({ content: `window.__BOREALIS__.COMMUNICATE('${event}', ${JSON.stringify(data)});` })
+        }
+    }
+
+    async finaliseInit() {
+        await this.injector.refreshInstances();
+        for (let page in this.injector.instance) {
+            this.injector.instance[page].exposeFunction(`borealisPush`, (event, data) => {
+                return this.recieveData(event, data);
+            })
+            this.injector.instance[page].addScriptTag({ content: "window.Borealis.setCommunicatorOnline()" })
+
+            this.knownInstances.push(page);
         }
     }
 

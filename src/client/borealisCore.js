@@ -15,7 +15,7 @@ Borealis = class {
         window.__BOREALIS__.quickAccessHook = this.quickAccessHook.bind(this);
         window.__BOREALIS__.uninject = this.uninject.bind(this);
 
-        this.reactHook = {};
+        this.hooks = {};
 
         this.serverData = {};
 
@@ -23,16 +23,16 @@ Borealis = class {
         if (!window.SP_REACT) {
             window.onload = async () => {
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                window.__BOREALIS__.__REACTHOOK__ = {};
-                this.reactHook.backups = {
-                    createElement: window.SP_REACT.createElement
+                this.hooks.backups = {
+                    createElement: window.SP_REACT.createElement,
+                    focusNav: window.FocusNavController.m_FocusChangedCallbacks.Register(this.focusNavControllerHook.bind(this))
                 };
                 window.SP_REACT.createElement = this.createElement.bind(this);
             }
         } else {
-            window.__BOREALIS__.__REACTHOOK__ = {};
-            this.reactHook.backups = {
-                createElement: window.SP_REACT.createElement
+            this.hooks.backups = {
+                createElement: window.SP_REACT.createElement,
+                focusNav: window.FocusNavController.m_FocusChangedCallbacks.Register(this.focusNavControllerHook.bind(this))
             };
             window.SP_REACT.createElement = this.createElement.bind(this);
         }
@@ -78,13 +78,31 @@ Borealis = class {
         this.serverPoll();
     }
 
-    handleCommunication(data) {
+    handleCommunication(event, data) {
         console.log('Recieved Data from Borealis Server.');
         console.log(data);
+
+        switch (event) {
+            case "plugin": {
+                this.handlePlugin(data);
+            }
+        }
+    }
+
+    handlePlugin(data) {
+        console.log('Recieved Plugin Data.');
+
+        try {
+            eval(data.contents);
+        } catch (e) {
+            console.log('Failed to load plugin: ' + data.name);
+            console.error(e);
+        }
     }
 
     renderJSX(JSX) {
         const React = window.SP_REACT;
+
         return eval(window.Babel.transform(JSX, { presets: ["react"] }).code)
     }
 
@@ -120,8 +138,6 @@ Borealis = class {
                 const React = window.SP_REACT;
 
                 args[2].props.pages.push("separator");
-
-                console.log(args);
 
                 args[2].props.pages.push({
                     visible: true,
@@ -164,28 +180,84 @@ Borealis = class {
                 //         </div>`
                 //     )
                 content: React.createElement(this.renderJSX(`
-                React.forwardRef((props, ref) =>
-                    (
-                        <div ref={ref} focusable={true} noFocusRing={false} focusClassName="gpfocus">
-                            <h2>Borealis Experiments</h2>
+                (props) => {
+                    const elementRef = React.useRef(null);
 
-                            <button focusable={true} noFocusRing={false} focusClassName="gpfocus">
-                            </button>
+                    React.useEffect(() => {
+                        // Let's attempt to rewrite the Nav.
+                        const navTree = this.findNavTree(elementRef.current.parentElement);
+
+                        if (navTree) {
+                            navTree.m_rgChildren.push(
+                                new navClass(navTree.m_Tree, navTree)
+                            )
+                        }
+
+                        console.log(navTree);
+                    });
+
+                    return (
+                        <div ref={elementRef}>
+
                         </div>
-                  ))`))
+                    )
+                }
+            `))
                 })
             }
 
             if (args[0].toString().includes("RemotePlayTogetherControls")) {
                 console.log(args);
             }
-
-            // if (args[0].toString().includes('focusable')) {
-            //     console.log(args);
-            // }
         }
 
-        return this.reactHook.backups.createElement.apply(window.SP_REACT, args);
+        return this.hooks.backups.createElement.apply(window.SP_REACT, args);
+    }
+
+    focusNavControllerHook() {
+        // // A couple checks to make sure we are hooking the correct things.
+        // if (!arguments[2]) {return}
+
+        // if (arguments[2].m_Tree.m_ID !== "root") {return}
+
+        // if (!arguments[2].m_element.className.includes("gamepadpagedsettings_PagedSettingsDialog_PageListItem")) {return;};
+
+        // let target = arguments[2].m_Parent.m_Parent.m_Parent.m_rgChildren[1];
+
+        // if (target.m_element.innerText.includes("BorealisOS")) {
+        //     console.log('A');
+        //     target.Tree.CreateNode(document.getElementById("testOK"))
+        // }
+    }   
+
+    findNavTree(element) {
+        let finalResult = false;
+
+        function crawlTree(tree) {
+            if (tree.m_element === element) {
+                console.log(tree.m_element);
+                return tree;
+            }
+
+            if (tree.m_rgChildren) {
+                for (let i = 0; i < tree.m_rgChildren.length; i++) {
+                    let result = crawlTree(tree.m_rgChildren[i]);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+        }
+
+        window.FocusNavController.m_rgGamepadNavigationTrees.forEach(tree => {
+            let result = crawlTree(tree.Root);
+
+            if (result) {
+                finalResult = result;
+            }
+        });
+
+        return finalResult;
     }
 
     setTheme(style) {
@@ -208,7 +280,8 @@ Borealis = class {
 
     uninject() {
         // Rollback React Hooks
-        window.SP_REACT.createElement = this.reactHook.backups.createElement
+        window.SP_REACT.createElement = this.hooks.backups.createElement
+        this.hooks.backups.focusNav.Unregister()
         this.removeTheme();
 
         // Rewrite dirty hooks to do nothing, we can't remove them or else SteamOS crashes.

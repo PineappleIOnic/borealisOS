@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/PineappleIOnic/borealisOS#readme",
   "dependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/standalone": "^7.17.11",
     "axios": "^0.26.1",
     "chalk": "^4.1.2",
     "chokidar": "^3.5.3",

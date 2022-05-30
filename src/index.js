@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const BorealisUI = require('./libs/borealisUI');
 const HotReload = require('./libs/hotReload');
 const ThemeEngine = require('./libs/themeEngine');
+const PluginEngine = require('./libs/pluginEngine');
 global.keystore = new (require('./libs/keystore.js'))();
 
 function generateUILib(injector) {
@@ -50,13 +51,16 @@ async function init() {
     logger.info('Injection finished. Starting communicator.');
 
     const communicator = new borealisCommunicator();
-    communicator.init(injector);
+    await communicator.init(injector);
 
     if (process.argv.includes('--hot-reload')) {
         const hotReload = new HotReload(injector);
     }
 
     new ThemeEngine(injector, communicator);
+    new PluginEngine(injector, communicator);
+
+    communicator.finaliseInit(injector);
 
     process.on('SIGINT', async function () {
         logger.info("Shutting down BorealisOS");
