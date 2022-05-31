@@ -1,6 +1,6 @@
 {
   "name": "borealis-core",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "The core injector and plugin loader for BorealisOS",
   "main": "src/index.js",
   "scripts": {
@@ -25,6 +25,7 @@
     "chalk": "^4.1.2",
     "chokidar": "^3.5.3",
     "puppeteer-core": "^13.5.2",
+    "semver": "^7.3.7",
     "webpack": "^5.72.1"
   }
 }

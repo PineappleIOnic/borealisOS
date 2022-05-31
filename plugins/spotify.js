@@ -1,4 +1,4 @@
-class Spotify extends borealisPlugin {
+module.exports = class Spotify extends BorealisPlugin {
     // An Example Integration for BorealisOS
 
     constructor() {
@@ -10,7 +10,7 @@ class Spotify extends borealisPlugin {
             version: "1.0.0",
             dependencies: ['borealis-core'],
             config: [
-                // Config is a list of variables that can be edited in Borealis's Plugin Settings.
+                // Config is a list of variables that you want borealis to save persistently.
                 // They will be automatically saved and loaded on initialisation and accessible through
                 // this.config.variableName
 
@@ -41,7 +41,18 @@ class Spotify extends borealisPlugin {
 
     async main() {
         // This is a main thread for your plugin. You can do anything here.
-        this.borealisUI.register
+
+        this.UI.settingsPage = (props) => {
+            const React = window.SP_REACT;
+
+            return (
+                <div>
+                    <h1>Hello World!</h1>
+                    <p>This is an example plugin.</p>
+                    <p>You can edit this file to create your own plugin.</p>
+                </div>
+            )
+        };
     }
 
     async login() {

@@ -2,13 +2,12 @@ const puppeteer = require('puppeteer-core');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const axios = require('axios').default;
-const logger = require('./log');
+const logger = new (require('./log'))('Injector');
 const fs = require('fs');
 const { resolve } = require('path');
 
 module.exports = class borealisInjector {
     constructor() {
-        this.log = new logger('Injector');
         this.filesToPatch = [
             'steamui/sp.js',
             'steamui/libraryroot~sp.js',
@@ -44,7 +43,7 @@ module.exports = class borealisInjector {
             let response = await axios.get("http://localhost:8080/json/version", { validateStatus: () => true }).then(
                 data => data.data
             ).catch((err) => {
-                this.log.warning('Something went wrong attempt to contact debugger, retrying in 5 seconds...');
+                logger.warning('Something went wrong attempt to contact debugger, retrying in 5 seconds...');
                 return false;
             });
 
@@ -71,7 +70,7 @@ module.exports = class borealisInjector {
                 this.browserInstance = instance;
                 return true;
             }).catch((err) => {
-                this.log.warning('Failed to hook CEF, waiting 5 seconds then trying again.');
+                logger.warning('Failed to hook CEF, waiting 5 seconds then trying again.');
                 return false;
             })
 
@@ -142,11 +141,11 @@ module.exports = class borealisInjector {
                 fs.writeFileSync(resolve(steamInstall + "/backups", file), contents);
             }
 
-            this.log.info('Patching File: ' + file);
+            logger.info('Patching File: ' + file);
             await this.patchFile(resolve(steamInstall, file), steamInstall);
         }
 
-        this.log.info('All Files Patched. Took ' + (Date.now() - startTime) + 'ms');
+        logger.info('All Files Patched. Took ' + (Date.now() - startTime) + 'ms');
 
 
         // Step 2, check if steam is running and willing to accept connections
@@ -158,7 +157,7 @@ module.exports = class borealisInjector {
             }
         }
 
-        this.log.info('Steam is running! Attempting to connect...')
+        logger.info('Steam is running! Attempting to connect...')
 
         let cefdata = await this.getCEFData();
 
@@ -169,11 +168,11 @@ module.exports = class borealisInjector {
                 browserWSEndpoint: cefdata.webSocketDebuggerUrl,
                 defaultViewport: null
             }).then((instance) => {
-                this.log.info('Successfully hooked CEF.')
+                logger.info('Successfully hooked CEF.')
                 this.browserInstance = instance;
                 return true;
             }).catch((err) => {
-                this.log.warning('Failed to hook CEF, waiting 5 seconds then trying again.');
+                logger.warning('Failed to hook CEF, waiting 5 seconds then trying again.');
                 return false;
             })
 
@@ -191,7 +190,7 @@ module.exports = class borealisInjector {
             let title = await page.title();
             if (title === 'SP') {
                 await page.reload();
-                this.log.info('Finished All Stages, BorealisOS is loaded.');
+                logger.info('Finished All Stages, BorealisOS is loaded.');
                 this.instance.SP = page;
             } else {
                 // Manually inject borealisCore into non main pages.
@@ -207,7 +206,7 @@ module.exports = class borealisInjector {
         // Restore all files.
         this.backups.forEach(file => {
             fs.writeFileSync(file.directory, file.content);
-            this.log.info('Restored original file: ' + file.directory);
+            logger.info('Restored original file: ' + file.directory);
         })
 
         this.instance.SP.reload();

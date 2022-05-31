@@ -8,6 +8,8 @@ const BorealisUI = require('./libs/borealisUI');
 const HotReload = require('./libs/hotReload');
 const ThemeEngine = require('./libs/themeEngine');
 const PluginEngine = require('./libs/pluginEngine');
+const UpdateHandler = require('./libs/updateHandler');
+
 global.keystore = new (require('./libs/keystore.js'))();
 
 function generateUILib(injector) {
@@ -59,10 +61,11 @@ async function init() {
 
     new ThemeEngine(injector, communicator);
     new PluginEngine(injector, communicator);
+    new UpdateHandler(injector, communicator);
 
     communicator.finaliseInit(injector);
 
-    process.on('SIGINT', async function () {
+    process.on('exit', async function () {
         logger.info("Shutting down BorealisOS");
 
         await injector.uninject();

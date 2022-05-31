@@ -11,6 +11,8 @@ module.exports = class bundler {
             version: require('../../package.json').version,
             platform: process.platform,
             arch: process.arch,
+            hotReloading: process.argv.includes('--hot-reload') ? 'True' : 'False',
+            environment: process.env.NODE_ENV || 'development',
         }
 
         this.webpack = webpack({

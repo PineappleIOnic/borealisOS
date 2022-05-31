@@ -1,5 +1,4 @@
-const logger = new (require('./log'))('communicator');
-
+const logger = new (require('./log'))('Communicator');
 module.exports = class borealisCommunicator {
     async init(injector) {
         this.messageHooks = {};
@@ -48,7 +47,7 @@ module.exports = class borealisCommunicator {
     async finaliseInit() {
         await this.injector.refreshInstances();
         for (let page in this.injector.instance) {
-            this.injector.instance[page].exposeFunction(`borealisPush`, (event, data) => {
+            await this.injector.instance[page].exposeFunction(`borealisPush`, (event, data) => {
                 return this.recieveData(event, data);
             })
             this.injector.instance[page].addScriptTag({ content: "window.Borealis.setCommunicatorOnline()" })

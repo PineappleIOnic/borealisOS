@@ -6,34 +6,39 @@ const babel = require('@babel/core');
 
 module.exports = class PluginEngine {
     constructor(injectorInstance, communicator) {
-        logger.info('Transpiling Plugins...');
 
-        // Read all plugins
-        try {
-            fs.accessSync(resolve('./plugins'))
-        }
-        catch {
-            fs.mkdirSync(resolve('./plugins', { recursive: true }));
-            return;
-        }
+        communicator.registerEventHook("loadPlugins", () => {
+            logger.info('Transpiling Plugins...');
 
-        let allPlugins = {};
+            // Read all plugins
+            try {
+                fs.accessSync(resolve('./plugins'))
+            }
+            catch {
+                fs.mkdirSync(resolve('./plugins', { recursive: true }));
+                return;
+            }
 
-        fs.readdirSync(resolve('./plugins')).forEach(file => {
-            // Read file
-            let data = fs.readFileSync(resolve('./plugins', file)).toString();
+            let allPlugins = {};
 
-            // Transpile
-            let transpiled = babel.transformSync(data, {
-                presets: ['@babel/preset-react']
-            });
+            fs.readdirSync(resolve('./plugins')).forEach(file => {
+                // Read file
+                let data = fs.readFileSync(resolve('./plugins', file)).toString();
 
-            logger.info(`Transpiled ${file}`);
+                let startTime = Date.now();
 
-            // Send to communicator
-            communicator.send('plugin', {
-                name: file,
-                contents: transpiled.code
+                // Transpile
+                let transpiled = babel.transformSync(data, {
+                    presets: ['@babel/preset-react']
+                });
+
+                logger.info(`Transpiled ${file} in ${Date.now() - startTime}ms`);
+
+                // Send to communicator
+                communicator.send('plugin', {
+                    name: file,
+                    contents: transpiled.code
+                });
             });
         });
     }

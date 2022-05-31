@@ -19,8 +19,8 @@ let Borealis = class {
         window.__BOREALIS__.uninject = this.uninject.bind(this);
 
         this.hooks = {};
-
         this.serverData = {};
+        this.plugins = [];
 
         // Wait until webpack modules are loaded bebfore initialising hooks.
         if (!window.SP_REACT) {
@@ -41,16 +41,24 @@ let Borealis = class {
         }
 
         this.communicatorOnline = false;
+
+        if (window.borealisPush) {
+            this.setCommunicatorOnline();
+        }
     }
 
     async setCommunicatorOnline() {
         this.communicatorOnline = true;
+
+        console.log("Communicator Online. Requesting additional data...");
 
         let theme = await window.borealisPush("currentTheme");
 
         if (theme.name !== "Default (SteamOS Holo)") {
             this.setTheme(theme.content)
         }
+
+        window.borealisPush("loadPlugins");
     }
 
     // Convert SteamUI Classes into Borealis ones.
@@ -82,8 +90,7 @@ let Borealis = class {
     }
 
     handleCommunication(event, data) {
-        console.log('Recieved Data from Borealis Server.');
-        console.log(data);
+        console.log('Recieved Event: ' + event);
 
         switch (event) {
             case "plugin": {
@@ -95,8 +102,20 @@ let Borealis = class {
     handlePlugin(data) {
         console.log('Recieved Plugin Data.');
 
+        const BorealisPlugin = require('./borealisPlugin.js').default;
+
         try {
+            let module = {};
+
             eval(data.contents);
+
+            let plugin = new module.exports();
+
+            plugin.main();
+
+            console.log('Loaded Plugin: ' + plugin.pluginInfo.name);
+
+            this.plugins.push(plugin);
         } catch (e) {
             console.log('Failed to load plugin: ' + data.name);
             console.error(e);
