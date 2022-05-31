@@ -35,7 +35,7 @@ export default (props) => {
     return (
         <div class="borealis_settings">
             <div style={{textAlign: "center"}}>
-                <h1 style={{ marginBottom: "-15px", fontSize: "65px", fontWeight: "100", marginTop: "0px" }}>Borealis<span style={{ fontWeight: "500", marginBottom: "0px", position: "relative" }}>OS<span class="version" style={{position: "absolute", left: "95%", top: "0px", fontSize: "13px"}}>indev</span></span></h1>
+                <h1 style={{ marginBottom: "-15px", fontSize: "65px", fontWeight: "100", marginTop: "0px" }}>Borealis<span style={{ fontWeight: "500", marginBottom: "0px", position: "relative" }}>OS<span class="version" style={{position: "absolute", left: "95%", top: "0px", fontSize: "13px"}}>v{COMPILE_DATA.version}</span></span></h1>
                 <p style={{ fontWeight: "100", marginTop: "0px", fontSize: "15px" }}>SteamOS 3.0 plugin and customization framework</p>
             </div>
 
@@ -96,7 +96,7 @@ export default (props) => {
             <div class="gamepaddialog_FieldLabelRow_H9WOq">
                 <div class="gamepaddialog_FieldLabel_3b0U-">BorealisOS Version</div>
                 <div class="gamepaddialog_FieldChildren_14_HB">
-                    <div class="gamepaddialog_LabelFieldValue_5Mylh">InDev</div>
+                    <div class="gamepaddialog_LabelFieldValue_5Mylh">v{COMPILE_DATA.version}</div>
                 </div>
             </div>
           </div>

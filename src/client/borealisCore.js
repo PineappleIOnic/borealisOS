@@ -118,13 +118,7 @@ let Borealis = class {
         <h2>Test 65</h2>
     </div>
 </div>`),
-            tab: this.renderJSX(`
-            <svg viewBox="0 0 364 364" xmlns="http://www.w3.org/2000/svg">
- <g>
-  <path id="svg_1" d="m223.864,272.729l-38.608,-97.848l-56.603,89.184l-35.487,0l79.052,-127.654l-8.875,-25.229l-30.781,0l0,-30.062l52.691,0l60.521,153.899l26.608,-8.668l8.867,29.813l-57.385,16.565z" fill="currentColor"/>
-  <path id="svg_2" d="m337.623,182.198c0,85.579 -69.363,154.934 -154.934,154.934c-85.571,0 -154.936,-69.354 -154.936,-154.934c0,-85.569 69.363,-154.933 154.936,-154.933c85.57,0 154.934,69.364 154.934,154.933z" stroke-width="34" stroke="currentColor" fill="none"/>
- </g>
-</svg>`),
+            tab: React.createElement(lambdaLogo),
             title: this.renderJSX(`<div className="quickaccessmenu_Title_34nl5">BorealisOS</div>`),
         })
     }

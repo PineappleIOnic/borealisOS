@@ -137,8 +137,10 @@ module.exports = class borealisInjector {
                 content: contents
             });
 
-            // Write backup file
-            fs.writeFileSync(resolve(steamInstall + "/backups", file), contents);
+            if (!contents.includes('BOREALIS MODIFIED')) {
+                // Write backup file
+                fs.writeFileSync(resolve(steamInstall + "/backups", file), contents);
+            }
 
             this.log.info('Patching File: ' + file);
             await this.patchFile(resolve(steamInstall, file), steamInstall);

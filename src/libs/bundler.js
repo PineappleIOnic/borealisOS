@@ -7,6 +7,12 @@ const { resolve } = require('path');
 
 module.exports = class bundler {
     constructor() {
+        let compileData = {
+            version: require('../../package.json').version,
+            platform: process.platform,
+            arch: process.arch,
+        }
+
         this.webpack = webpack({
             mode: "development",
             entry: resolve("./src/client/borealisCore.js"),
@@ -14,6 +20,11 @@ module.exports = class bundler {
                 path: resolve("./dist/"),
                 filename: "bundle.js"
             },
+            plugins: [
+                new webpack.DefinePlugin({
+                    'COMPILE_DATA': JSON.stringify(compileData)
+                })
+            ],
             module: {
                 rules: [
                     {
