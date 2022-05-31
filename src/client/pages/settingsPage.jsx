@@ -199,6 +199,13 @@ export default (props) => {
                         </div>
                     </div>
                 </div>
+                <div class="gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable" tabindex="0">
+                    <div class="gamepaddialog_FieldLabelRow_H9WOq">
+                        <div class="gamepaddialog_FieldChildren_14_HB">
+                            <button type="button" class="DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable" onClick={() => window.borealisPush('uninject')}>Uninject</button>
+                        </div>
+                    </div>
+                </div>
             </div> : 
             <div class="borealis_settings_plugin">
                 { window.Borealis.plugins[currentPluginSettings].UI.settingsPage() }

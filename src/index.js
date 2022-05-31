@@ -65,6 +65,11 @@ async function init() {
 
     communicator.finaliseInit(injector);
 
+    communicator.registerEventHook('uninject', async () => {
+        await injector.uninject();
+        process.exit();
+    })
+
     process.on('exit', async function () {
         logger.info("Shutting down BorealisOS");
 
