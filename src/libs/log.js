@@ -1,7 +1,6 @@
 const chalk = require('chalk');
 
 module.exports = class logger {
-
     constructor(subroutineName) {
         this.name = subroutineName;
     }

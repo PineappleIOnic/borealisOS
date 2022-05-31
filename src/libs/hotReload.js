@@ -2,11 +2,13 @@ const logger = new (require('./log'))('Hot Reload');
 const chokidar = require('chokidar');
 const { resolve } = require('path');
 const { copyFileSync, readFileSync } = require('fs');
+const Bundler = require('./bundler');
 
 module.exports = class HotReload {
     constructor(injectorInstance) {
         this.injector = injectorInstance;
         this.timeouts = {}
+        this.bundler = new Bundler();
 
         logger.info('Watching for changes...');
 
@@ -35,9 +37,16 @@ module.exports = class HotReload {
 
         if (type === 'borealisCore' && event === 'change') {
             logger.info('Reloading borealisCore...');
-            copyFileSync(resolve('./src/client/borealisCore.js'), resolve(this.injector.detectSteamInstall(), 'steamui/borealis/borealisCore.js'));
+
+            let startTime = Date.now();
+
+            await this.bundler.bundle();
+            
+            copyFileSync(resolve('./dist/bundle.js'), resolve(this.injector.detectSteamInstall(), 'steamui/borealis/borealisCore.js'));
             this.injector.instance.SP.addScriptTag({ content: "window.__BOREALIS__.uninject();" })
             this.injector.instance.SP.addScriptTag({ path: path });
+
+            logger.info(`Rebundled and Reloaded borealisCore in ${Date.now() - startTime}ms`);
         } else if (type === 'theme' && event === 'change') {
             return;
             // TODO: Throw this to the theme engine instead.

@@ -1,6 +1,8 @@
 const BorealisPatch = require('../borealisPatch');
 const fs = require('fs');
 const path = require('path');
+const Bundler = require('../libs/bundler');
+const logger = new(require('../libs/log'))('CorePatch');
 
 module.exports = class CorePatch extends BorealisPatch {
     constructor() {
@@ -9,27 +11,36 @@ module.exports = class CorePatch extends BorealisPatch {
         this.patchFiles = [
             'steamui/index.html'
         ];
+        this.bundler = new Bundler();
     }
 
     getPatchFiles() {
         return this.patchFiles;
     }
 
-    patch(file, steamInstall) {
+    async patch(file, steamInstall) {
         let BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"), 'borealisOS');
         let fileData = fs.readFileSync(file);
 
         if (fileData.includes('BOREALIS MODIFIED')) {
-            console.warn('WARNING! DIRTY INSTANCE DETECTED! RESTART YOUR STEAM CLIENT!');
-            console.warn('Refusing to initialise Borealis Patches due to dirty instance.');
-            return;
+            logger.warning(`Borealis Failed to rollback changes to ${file} on the last launch, attempting to restore backup...`);
+
+            if (fs.existsSync(path.resolve(steamInstall, 'backups/', file))) {
+                fs.copyFileSync(path.resolve(steamInstall, 'backups/', file), file);
+                logger.info(`Borealis Successfully restored backup of ${file}`);
+            } else {
+                logger.error(`Borealis Failed to restore backup of ${file}, Refusing to patch. Please restart your steam client and try again.`);
+                return;
+            }
         }
 
         if (!fs.existsSync(path.resolve(steamInstall, 'steamui/borealis'))) {
             fs.mkdirSync(path.resolve(steamInstall, 'steamui/borealis', { recursive: true }));
         }
 
-        fs.copyFileSync(path.resolve('./src/client/borealisCore.js'), path.resolve(steamInstall, 'steamui/borealis/borealisCore.js'));
+        await this.bundler.bundle();
+
+        fs.copyFileSync(path.resolve('./dist/bundle.js'), path.resolve(steamInstall, 'steamui/borealis/borealisCore.js'));
         fs.copyFileSync(path.resolve(BorealisAppdata, 'borealisUI_Client.js'), path.resolve(steamInstall, 'steamui/borealis/borealisUI.js'));
 
         let targetStringIndex = fileData.indexOf('<div style="display:none"></div>');

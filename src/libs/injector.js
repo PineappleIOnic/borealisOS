@@ -3,7 +3,6 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const axios = require('axios').default;
 const logger = require('./log');
-const path = require('path');
 const fs = require('fs');
 const { resolve } = require('path');
 
@@ -105,33 +104,47 @@ module.exports = class borealisInjector {
         })
     }
 
-    patchFile(file, steamInstall) {
-        this.patches.forEach(patch => {
-            patch.getPatchFiles().forEach(patchFile => {
+    async patchFile(file, steamInstall) {
+        for (const patch of this.patches) {
+            for (const patchFile of patch.getPatchFiles()) {
                 if (file.replace(/\\/g, '/').endsWith(patchFile)) {
-                    patch.patch(file, steamInstall);
+                    await patch.patch(file, steamInstall);
                 }
-            })
-        })
+            }
+        }
     }
 
     async inject() {
         // Step 1, Patch all client files that need patching.
         const steamInstall = this.detectSteamInstall();
 
+        if (fs.existsSync(resolve(steamInstall, './backups'))) {
+            fs.rmSync(resolve(steamInstall, './backups'), { recursive: true });
+            fs.mkdirSync(resolve(steamInstall, './backups'));
+            fs.mkdirSync(resolve(steamInstall, './backups/steamui'));
+        }
+
         this.loadPatchFiles();
 
         this.backups = [];
 
-        this.filesToPatch.forEach(file => {
+        let startTime = Date.now();
+
+        for (const file of this.filesToPatch) {
+            let contents = fs.readFileSync(resolve(steamInstall, file));
             this.backups.push({
                 directory: resolve(steamInstall, file),
-                content: fs.readFileSync(resolve(steamInstall, file))
+                content: contents
             });
 
+            // Write backup file
+            fs.writeFileSync(resolve(steamInstall + "/backups", file), contents);
+
             this.log.info('Patching File: ' + file);
-            this.patchFile(resolve(steamInstall, file), steamInstall);
-        })
+            await this.patchFile(resolve(steamInstall, file), steamInstall);
+        }
+
+        this.log.info('All Files Patched. Took ' + (Date.now() - startTime) + 'ms');
 
 
         // Step 2, check if steam is running and willing to accept connections
