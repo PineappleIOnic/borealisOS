@@ -1,19 +1,19 @@
-const chalk = require('chalk');
+const chalk = require('chalk')
 
 module.exports = class logger {
-    constructor(subroutineName) {
-        this.name = subroutineName;
-    }
+  constructor (subroutineName) {
+    this.name = subroutineName
+  }
 
-    info(message) {
-        console.log(`[${this.name}] [${chalk.blue('INFO')}] ${message}`);
-    }
+  info (message) {
+    console.log(`[${this.name}] [${chalk.blue('INFO')}] ${message}`)
+  }
 
-    warning(message) {
-        console.log(`[${this.name}] [${chalk.yellow('WARN')}] ${message}`);
-    }
+  warning (message) {
+    console.log(`[${this.name}] [${chalk.yellow('WARN')}] ${message}`)
+  }
 
-    error(message) {
-        console.log(`[${this.name}] [${chalk.red('ERROR')}] ${message}`);
-    }
+  error (message) {
+    console.log(`[${this.name}] [${chalk.red('ERROR')}] ${message}`)
+  }
 }

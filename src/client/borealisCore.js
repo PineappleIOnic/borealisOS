@@ -1,251 +1,251 @@
 /*
 Borealis Client, Clientside SteamOS customisation framework.
 */
+import settingsPage from './pages/settingsPage.jsx'
+import lambdaLogo from './assets/lambdaLogo.jsx'
+
 if (window.Borealis) {
-    window.Borealis.uninject();
+  window.Borealis.uninject()
 }
 
-import settingsPage from './pages/settingsPage.jsx';
-import lambdaLogo from './assets/lambdaLogo.jsx';
+const Borealis = class {
+  constructor () {
+    console.log('BorealisOS Client Initialised!')
 
-let Borealis = class {
-    constructor() {
-        console.log('BorealisOS Client Initialised!')
+    // Create our hook functions.
+    window.__BOREALIS__ = {}
+    window.__BOREALIS__.COMMUNICATE = this.handleCommunication.bind(this)
+    window.__BOREALIS__.quickAccessHook = this.quickAccessHook.bind(this)
+    window.__BOREALIS__.uninject = this.uninject.bind(this)
 
-        // Create our hook functions.
-        window.__BOREALIS__ = {};
-        window.__BOREALIS__.COMMUNICATE = this.handleCommunication.bind(this);
-        window.__BOREALIS__.quickAccessHook = this.quickAccessHook.bind(this);
-        window.__BOREALIS__.uninject = this.uninject.bind(this);
+    this.hooks = {}
+    this.serverData = {}
+    this.plugins = []
 
-        this.hooks = {};
-        this.serverData = {};
-        this.plugins = [];
-
-        // Wait until webpack modules are loaded bebfore initialising hooks.
-        if (!window.SP_REACT) {
-            window.onload = async () => {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                this.hooks.backups = {
-                    createElement: window.SP_REACT.createElement,
-                    focusNav: window.FocusNavController.m_FocusChangedCallbacks.Register(this.focusNavControllerHook.bind(this))
-                };
-                window.SP_REACT.createElement = this.createElement.bind(this);
-            }
-        } else {
-            this.hooks.backups = {
-                createElement: window.SP_REACT.createElement,
-                focusNav: window.FocusNavController.m_FocusChangedCallbacks.Register(this.focusNavControllerHook.bind(this))
-            };
-            window.SP_REACT.createElement = this.createElement.bind(this);
+    // Wait until webpack modules are loaded bebfore initialising hooks.
+    if (!window.SP_REACT) {
+      window.onload = async () => {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        this.hooks.backups = {
+          createElement: window.SP_REACT.createElement,
+          focusNav: window.FocusNavController.m_FocusChangedCallbacks.Register(this.focusNavControllerHook.bind(this))
         }
+        window.SP_REACT.createElement = this.createElement.bind(this)
+      }
+    } else {
+      this.hooks.backups = {
+        createElement: window.SP_REACT.createElement,
+        focusNav: window.FocusNavController.m_FocusChangedCallbacks.Register(this.focusNavControllerHook.bind(this))
+      }
+      window.SP_REACT.createElement = this.createElement.bind(this)
+    }
 
-        this.communicatorOnline = false;
+    this.communicatorOnline = false
 
-        if (window.borealisPush) {
-            this.setCommunicatorOnline();
+    if (window.borealisPush) {
+      this.setCommunicatorOnline()
+    }
+  }
+
+  async setCommunicatorOnline () {
+    this.communicatorOnline = true
+
+    console.log('Communicator Online. Requesting additional data...')
+
+    const theme = await window.borealisPush('currentTheme')
+
+    if (theme.name !== 'Default (SteamOS Holo)') {
+      this.setTheme(theme.content)
+    }
+
+    window.borealisPush('loadPlugins')
+  }
+
+  // Convert SteamUI Classes into Borealis ones.
+  computeStyle (data) {
+    const classes = data.split(' ')
+    let result = ''
+
+    classes.forEach(a => {
+      for (const library in window.__BOREALISUI__) {
+        for (const obj in window.__BOREALISUI__[library].classes) {
+          if (window.__BOREALISUI__[library].classes[obj] === a) {
+            result += `window.__BOREALISUI__.${library}.classes.${obj} `
+          }
         }
+      }
+    })
+
+    return result
+  }
+
+  async pollServer () {
+    console.log('Polling server.')
+    this.serverData = {
+      currentTheme: await window.borealisPush('currentTheme'),
+      availableThemes: await window.borealisPush('getThemes')
     }
 
-    async setCommunicatorOnline() {
-        this.communicatorOnline = true;
+    this.serverPoll()
+  }
 
-        console.log("Communicator Online. Requesting additional data...");
+  handleCommunication (event, data) {
+    console.log('Recieved Event: ' + event)
 
-        let theme = await window.borealisPush("currentTheme");
-
-        if (theme.name !== "Default (SteamOS Holo)") {
-            this.setTheme(theme.content)
-        }
-
-        window.borealisPush("loadPlugins");
+    switch (event) {
+      case 'plugin': {
+        this.handlePlugin(data)
+      }
     }
+  }
 
-    // Convert SteamUI Classes into Borealis ones.
-    computeStyle(data) {
-        let classes = data.split(' ');
-        let result = "";
+  handlePlugin (data) {
+    console.log('Recieved Plugin Data.')
 
-        classes.forEach(a => {
-            for (let library in window.__BOREALISUI__) {
-                for (let obj in window.__BOREALISUI__[library].classes) {
-                    if (window.__BOREALISUI__[library].classes[obj] === a) {
-                        result += `window.__BOREALISUI__.${library}.classes.${obj} `;
-                    }
-                }
-            }
-        })
+    const BorealisPlugin = require('./borealisPlugin.js').default // eslint-disable-line
 
-        return result;
+    try {
+      const module = {}
+
+      eval(data.contents)
+
+      const plugin = new module.exports()
+
+      plugin.main()
+
+      console.log('Loaded Plugin: ' + plugin.pluginInfo.name)
+
+      this.plugins.push(plugin)
+    } catch (e) {
+      console.log('Failed to load plugin: ' + data.name)
+      console.error(e)
     }
+  }
 
-    async pollServer() {
-        console.log('Polling server.')
-        this.serverData = {
-            currentTheme: await window.borealisPush("currentTheme"),
-            availableThemes: await window.borealisPush("getThemes")
-        }
+  renderJSX (JSX) {
+    const React = window.SP_REACT
 
-        this.serverPoll();
-    }
+    return eval(window.Babel.transform(JSX, { presets: ['react'] }).code)
+  }
 
-    handleCommunication(event, data) {
-        console.log('Recieved Event: ' + event);
-
-        switch (event) {
-            case "plugin": {
-                this.handlePlugin(data);
-            }
-        }
-    }
-
-    handlePlugin(data) {
-        console.log('Recieved Plugin Data.');
-
-        const BorealisPlugin = require('./borealisPlugin.js').default;
-
-        try {
-            let module = {};
-
-            eval(data.contents);
-
-            let plugin = new module.exports();
-
-            plugin.main();
-
-            console.log('Loaded Plugin: ' + plugin.pluginInfo.name);
-
-            this.plugins.push(plugin);
-        } catch (e) {
-            console.log('Failed to load plugin: ' + data.name);
-            console.error(e);
-        }
-    }
-
-    renderJSX(JSX) {
-        const React = window.SP_REACT;
-
-        return eval(window.Babel.transform(JSX, { presets: ["react"] }).code)
-    }
-
-    quickAccessHook(Q) {
-        Q.push({
-            key: 7,
-            panel: this.renderJSX(`
+  quickAccessHook (Q) {
+    Q.push({
+      key: 7,
+      panel: this.renderJSX(`
 <div className="quickaccessmenu_TabGroupPanel_1QO7b Panel Focusable">
     <div className="quickaccesscontrols_PanelSection_Ob5uo">
         <h2>Test 65</h2>
     </div>
 </div>`),
-            tab: React.createElement(lambdaLogo),
-            title: this.renderJSX(`<div className="quickaccessmenu_Title_34nl5">BorealisOS</div>`),
+      tab: React.createElement(lambdaLogo),
+      title: this.renderJSX('<div className="quickaccessmenu_Title_34nl5">BorealisOS</div>')
+    })
+  }
+
+  createElement () {
+    const args = Array.prototype.slice.call(arguments)
+    const borealisUI = window.__BOREALISUI__
+
+    if (args[0] instanceof Function) {
+      // Settings Hook
+      if (args[0].toString().includes('GamepadPagedSettingsPage')) {
+        console.log('Detected settings page. Hooking...')
+
+        const React = window.SP_REACT
+
+        args[2].props.pages.push('separator')
+
+        args[2].props.pages.push({
+          visible: true,
+          title: 'BorealisOS',
+          icon: React.createElement(lambdaLogo),
+          route: '/settings/borealisOS',
+          content: React.createElement(settingsPage)
         })
+      }
+
+      if (args[0].toString().includes('RemotePlayTogetherControls')) {
+        console.log(args)
+      }
     }
 
-    createElement() {
-        const args = Array.prototype.slice.call(arguments);
-        const borealisUI = window.__BOREALISUI__;
+    return this.hooks.backups.createElement.apply(window.SP_REACT, args)
+  }
 
-        if (args[0] instanceof Function) {
-            // Settings Hook
-            if (args[0].toString().includes('GamepadPagedSettingsPage')) {
-                console.log('Detected settings page. Hooking...');
+  focusNavControllerHook () {
+    // // A couple checks to make sure we are hooking the correct things.
+    // if (!arguments[2]) {return}
 
-                const React = window.SP_REACT;
+    // if (arguments[2].m_Tree.m_ID !== "root") {return}
 
-                args[2].props.pages.push("separator");
+    // if (!arguments[2].m_element.className.includes("gamepadpagedsettings_PagedSettingsDialog_PageListItem")) {return;};
 
-                args[2].props.pages.push({
-                    visible: true,
-                    title: "BorealisOS",
-                    icon: React.createElement(lambdaLogo),
-                    route: "/settings/borealisOS",
-                    content: React.createElement(settingsPage)
-                })
-            }
+    // let target = arguments[2].m_Parent.m_Parent.m_Parent.m_rgChildren[1];
 
-            if (args[0].toString().includes("RemotePlayTogetherControls")) {
-                console.log(args);
-            }
+    // if (target.m_element.innerText.includes("BorealisOS")) {
+    //     console.log('A');
+    //     target.Tree.CreateNode(document.getElementById("testOK"))
+    // }
+  }
+
+  findNavTree (element) {
+    let finalResult = false
+
+    function crawlTree (tree) {
+      if (tree.m_element === element) {
+        console.log(tree.m_element)
+        return tree
+      }
+
+      if (tree.m_rgChildren) {
+        for (let i = 0; i < tree.m_rgChildren.length; i++) {
+          const result = crawlTree(tree.m_rgChildren[i])
+          if (result) {
+            return result
+          }
         }
-
-        return this.hooks.backups.createElement.apply(window.SP_REACT, args);
+      }
     }
 
-    focusNavControllerHook() {
-        // // A couple checks to make sure we are hooking the correct things.
-        // if (!arguments[2]) {return}
+    window.FocusNavController.m_rgGamepadNavigationTrees.forEach(tree => {
+      const result = crawlTree(tree.Root)
 
-        // if (arguments[2].m_Tree.m_ID !== "root") {return}
+      if (result) {
+        finalResult = result
+      }
+    })
 
-        // if (!arguments[2].m_element.className.includes("gamepadpagedsettings_PagedSettingsDialog_PageListItem")) {return;};
+    return finalResult
+  }
 
-        // let target = arguments[2].m_Parent.m_Parent.m_Parent.m_rgChildren[1];
-
-        // if (target.m_element.innerText.includes("BorealisOS")) {
-        //     console.log('A');
-        //     target.Tree.CreateNode(document.getElementById("testOK"))
-        // }
-    }   
-
-    findNavTree(element) {
-        let finalResult = false;
-
-        function crawlTree(tree) {
-            if (tree.m_element === element) {
-                console.log(tree.m_element);
-                return tree;
-            }
-
-            if (tree.m_rgChildren) {
-                for (let i = 0; i < tree.m_rgChildren.length; i++) {
-                    let result = crawlTree(tree.m_rgChildren[i]);
-                    if (result) {
-                        return result;
-                    }
-                }
-            }
-        }
-
-        window.FocusNavController.m_rgGamepadNavigationTrees.forEach(tree => {
-            let result = crawlTree(tree.Root);
-
-            if (result) {
-                finalResult = result;
-            }
-        });
-
-        return finalResult;
+  setTheme (style) {
+    // Check if we already have a theme enabled.
+    if (document.getElementById('borealis_theme')) {
+      document.getElementById('borealis_theme').innerHTML = style
+    } else {
+      const themeElement = document.createElement('style')
+      themeElement.id = 'borealis_theme'
+      themeElement.innerHTML = style
+      document.body.appendChild(themeElement)
     }
+  }
 
-    setTheme(style) {
-        // Check if we already have a theme enabled.
-        if (document.getElementById("borealis_theme")) {
-            document.getElementById("borealis_theme").innerHTML = style
-        } else {
-            var themeElement = document.createElement('style');
-            themeElement.id = "borealis_theme"
-            themeElement.innerHTML = style
-            document.body.appendChild(themeElement);
-        }
+  removeTheme () {
+    if (document.getElementById('borealis_theme')) {
+      document.getElementById('borealis_theme').remove()
     }
+  }
 
-    removeTheme() {
-        if (document.getElementById("borealis_theme")) {
-            document.getElementById("borealis_theme").remove();
-        }
-    }
+  uninject () {
+    // Rollback React Hooks
+    window.SP_REACT.createElement = this.hooks.backups.createElement
+    this.hooks.backups.focusNav.Unregister()
+    this.removeTheme()
 
-    uninject() {
-        // Rollback React Hooks
-        window.SP_REACT.createElement = this.hooks.backups.createElement
-        this.hooks.backups.focusNav.Unregister()
-        this.removeTheme();
-
-        // Rewrite dirty hooks to do nothing, we can't remove them or else SteamOS crashes.
-        window.__BOREALIS__.quickAccessHook = () => { }
-        window.__BOREALIS__.COMMUNICATE = () => { }
-    }
+    // Rewrite dirty hooks to do nothing, we can't remove them or else SteamOS crashes.
+    window.__BOREALIS__.quickAccessHook = () => { }
+    window.__BOREALIS__.COMMUNICATE = () => { }
+  }
 }
 
-window.Borealis = new Borealis();
+window.Borealis = new Borealis()

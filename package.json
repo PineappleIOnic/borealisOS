@@ -1,6 +1,6 @@
 {
   "name": "borealis-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The core injector and plugin loader for BorealisOS",
   "main": "src/index.js",
   "scripts": {
