@@ -3,6 +3,7 @@ Borealis Client, Clientside SteamOS customisation framework.
 */
 import settingsPage from './pages/settingsPage.jsx'
 import lambdaLogo from './assets/lambdaLogo.jsx'
+import quickAccess from './pages/quickAccess.jsx'
 
 if (window.Borealis) {
   window.Borealis.uninject()
@@ -122,23 +123,14 @@ const Borealis = class {
     }
   }
 
-  renderJSX (JSX) {
+  quickAccessHook (Q) {
     const React = window.SP_REACT
 
-    return eval(window.Babel.transform(JSX, { presets: ['react'] }).code)
-  }
-
-  quickAccessHook (Q) {
     Q.push({
       key: 7,
-      panel: this.renderJSX(`
-<div className="quickaccessmenu_TabGroupPanel_1QO7b Panel Focusable">
-    <div className="quickaccesscontrols_PanelSection_Ob5uo">
-        <h2>Test 65</h2>
-    </div>
-</div>`),
+      panel: React.createElement(quickAccess),
       tab: React.createElement(lambdaLogo),
-      title: this.renderJSX('<div className="quickaccessmenu_Title_34nl5">BorealisOS</div>')
+      title: React.createElement(() => (<div className='quickaccessmenu_Title_34nl5'>BorealisOS</div>))
     })
   }
 

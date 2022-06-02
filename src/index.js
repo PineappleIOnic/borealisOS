@@ -77,6 +77,14 @@ async function init () {
 
     process.exit()
   })
+
+  process.on('SIGINT', async function () {
+    logger.info('Shutting down BorealisOS')
+
+    await injector.uninject()
+
+    process.exit()
+  })
 }
 
 init()

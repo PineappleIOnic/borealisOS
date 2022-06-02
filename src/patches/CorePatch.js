@@ -46,7 +46,6 @@ module.exports = class CorePatch extends BorealisPatch {
     const targetStringIndex = fileData.indexOf('<div style="display:none"></div>')
 
     fileData = fileData.slice(0, targetStringIndex + '<div style="display:none"></div>'.length) +
-        '<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>' +
         '<script src="/borealis/borealisCore.js"></script>' +
         '<script src="/borealis/borealisUI.js"></script>' +
         fileData.slice(targetStringIndex + '<div style="display:none"></div>'.length, fileData.length)

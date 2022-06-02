@@ -18,7 +18,7 @@ module.exports = class QuickAccessPatch extends BorealisPatch {
     // Run patches...
     let fileData = fs.readFileSync(file)
 
-    fileData = this.hookFunc(fileData, '.filter((A=>!!A));', ' window.__BOREALIS__.quickAccessHook(Q);')
+    fileData = this.hookFunc(fileData, '}].filter((e=>!!e));', ' window.__BOREALIS__.quickAccessHook(E);') // TODO: Find a better, less likely to change detection method for this section of code.
 
     // Also add borealis modified tag.
     fileData = '/* BOREALIS MODIFIED */' + fileData

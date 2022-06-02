@@ -16,7 +16,7 @@ module.exports = class HotReload {
     chokidar.watch(resolve('./src/client/')).on('all', (event, path) => this.handleEvent(event, path, 'borealisCore'), {})
 
     // Watch plugins
-    chokidar.watch(resolve('./plugins')).on('all', (event, path) => this.handleEvent(event, path, 'borealisCore'))
+    chokidar.watch(resolve('./plugins')).on('all', (event, path) => this.handleEvent(event, path, 'plugin'))
 
     // Watch themes
     chokidar.watch(resolve('./themes')).on('all', (event, path) => this.handleEvent(event, path, 'theme'))
@@ -40,6 +40,8 @@ module.exports = class HotReload {
 
       const startTime = Date.now()
 
+      // TODO: Rewrite into webpack bundler and load the chunks into it.
+
       await this.bundler.bundle()
 
       copyFileSync(resolve('./dist/bundle.js'), resolve(this.injector.detectSteamInstall(), 'steamui/borealis/borealisCore.js'))
@@ -58,7 +60,9 @@ module.exports = class HotReload {
         this.injector.instance[page].addScriptTag({ content: 'window.Borealis.setTheme(`' + themeCSS + '`);' })
       }
     } else if (type === 'plugin') {
+      logger.info('Reloading plugin: ' + path)
 
+      // TODO: Throw to plugin engine
     }
   }
 }

@@ -55,14 +55,14 @@ export default (props) => {
   }
 
   return (
-    <div class='borealis_settings'>
+    <div className='borealis_settings'>
       <div style={{ textAlign: 'center' }}>
-        <h1 style={{ marginBottom: '-15px', fontSize: '65px', fontWeight: '100', marginTop: '0px' }}>Borealis<span style={{ fontWeight: '500', marginBottom: '0px', position: 'relative' }}>OS<span class='version' style={{ position: 'absolute', left: '95%', top: '0px', fontSize: '13px' }}>v{COMPILE_DATA.version}</span></span></h1>
+        <h1 style={{ marginBottom: '-15px', fontSize: '65px', fontWeight: '100', marginTop: '0px' }}>Borealis<span style={{ fontWeight: '500', marginBottom: '0px', position: 'relative' }}>OS<span className='version' style={{ position: 'absolute', left: '95%', top: '0px', fontSize: '13px' }}>v{COMPILE_DATA.version}</span></span></h1>
         <p style={{ fontWeight: '100', marginTop: '0px', fontSize: '15px' }}>SteamOS 3.0 plugin and customization framework</p>
       </div>
 
       {currentPluginSettings === false
-        ? <div class='borealis_settings_main'>
+        ? <div className='borealis_settings_main'>
           {
                     showInitialWarning &&
                       <div
@@ -83,7 +83,7 @@ export default (props) => {
                           with the touch screen for now.
                         </p>
 
-                        <button onClick={handleWarningClose} class='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>
+                        <button onClick={handleWarningClose} className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>
                           Ok, I understand.
                         </button>
                       </div>
@@ -94,18 +94,18 @@ export default (props) => {
             const plugin = window.Borealis.plugins[key]
             return (
               <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_ExtraPaddingOnChildrenBelow_5UO-_ gamepaddialog_StandardPadding_XRBFu gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable'>
-                <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-                  <div class='gamepaddialog_FieldLabel_3b0U-'>
+                <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+                  <div className='gamepaddialog_FieldLabel_3b0U-'>
                     {plugin.pluginInfo.name}
                   </div>
 
                   {plugin.UI.settingsPage && (
-                    <div class='gamepaddialog_FieldChildren_14_HB'>
-                      <button type='button' class='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => { console.log(key); setCurrentPluginSettings(key) }}>Plugin Options</button>
+                    <div className='gamepaddialog_FieldChildren_14_HB'>
+                      <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => { console.log(key); setCurrentPluginSettings(key) }}>Plugin Options</button>
                     </div>
                   )}
                 </div>
-                <div class='gamepaddialog_FieldDescription_2OJfk'>Author: {plugin.pluginInfo.author}</div>
+                <div className='gamepaddialog_FieldDescription_2OJfk'>Author: {plugin.pluginInfo.author}</div>
               </div>
             )
           })}
@@ -115,37 +115,37 @@ export default (props) => {
           {Object.keys(themes).map(key => {
             return (
               <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_ExtraPaddingOnChildrenBelow_5UO-_ gamepaddialog_StandardPadding_XRBFu gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable'>
-                <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-                  <div class='gamepaddialog_FieldLabel_3b0U-'>
+                <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+                  <div className='gamepaddialog_FieldLabel_3b0U-'>
                     {themes[key].meta.name}
                   </div>
-                  <div class='gamepaddialog_FieldChildren_14_HB' onClick={() => handleThemeChange(themes[key].meta.name)}>
+                  <div className='gamepaddialog_FieldChildren_14_HB' onClick={() => handleThemeChange(themes[key].meta.name)}>
                     {currentTheme === themes[key].meta.name
-                      ? <div class='gamepaddialog_Toggle_24G4g gamepaddialog_On_3ld7T Focusable gpfocuswithin'><div class='gamepaddialog_ToggleRail_2JtC3' /><div class='gamepaddialog_ToggleSwitch_3__OD' /></div>
-                      : <div class='gamepaddialog_Toggle_24G4g  Focusable'><div class='gamepaddialog_ToggleRail_2JtC3' /><div class='gamepaddialog_ToggleSwitch_3__OD' /></div>}
+                      ? <div className='gamepaddialog_Toggle_24G4g gamepaddialog_On_3ld7T Focusable gpfocuswithin'><div className='gamepaddialog_ToggleRail_2JtC3' /><div className='gamepaddialog_ToggleSwitch_3__OD' /></div>
+                      : <div className='gamepaddialog_Toggle_24G4g  Focusable'><div className='gamepaddialog_ToggleRail_2JtC3' /><div className='gamepaddialog_ToggleSwitch_3__OD' /></div>}
                   </div>
                 </div>
-                <div class='gamepaddialog_FieldDescription_2OJfk'>Author: {themes[key].meta.author}</div>
+                <div className='gamepaddialog_FieldDescription_2OJfk'>Author: {themes[key].meta.author}</div>
               </div>
             )
           })}
 
           <div className='DialogControlsSectionHeader'>Updates</div>
 
-          <div class='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
-            <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-              <div class='gamepaddialog_FieldLabel_3b0U-'>
-                <div class='systemsettings_SoftwareUpdateSection_RCuL6'>BorealisOS Updates</div>
+          <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
+            <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+              <div className='gamepaddialog_FieldLabel_3b0U-'>
+                <div className='systemsettings_SoftwareUpdateSection_RCuL6'>BorealisOS Updates</div>
               </div>
-              <div class='gamepaddialog_FieldChildren_14_HB'>
-                <div class='updaterfield_UpdateStatusContainer_8OvE2'>
+              <div className='gamepaddialog_FieldChildren_14_HB'>
+                <div className='updaterfield_UpdateStatusContainer_8OvE2'>
                   {latestRelease == false || semver.lte(COMPILE_DATA.version, (latestRelease ? latestRelease.tag_name : '0.0.0'))
-                    ? <button type='button' class='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={checkUpdate} disabled={checkingForUpdate}>{checkingForUpdate ? 'Checking...' : 'Check For Updates'}</button>
-                    : <button type='button' class='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>Install {latestRelease.tag_name}</button>}
+                    ? <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={checkUpdate} disabled={checkingForUpdate}>{checkingForUpdate ? 'Checking...' : 'Check For Updates'}</button>
+                    : <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>Install {latestRelease.tag_name}</button>}
                 </div>
               </div>
             </div>
-            <div class='gamepaddialog_FieldDescription_2OJfk'>Current Version: {COMPILE_DATA.version}, GitHub Version: {
+            <div className='gamepaddialog_FieldDescription_2OJfk'>Current Version: {COMPILE_DATA.version}, GitHub Version: {
                         latestRelease == false
                           ? 'Checking...'
                           : latestRelease.tag_name
@@ -154,55 +154,55 @@ export default (props) => {
           </div>
 
           <div className='DialogControlsSectionHeader'>More Info</div>
-          <div class='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
-            <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-              <div class='gamepaddialog_FieldLabel_3b0U-'>BorealisOS Version</div>
-              <div class='gamepaddialog_FieldChildren_14_HB'>
-                <div class='gamepaddialog_LabelFieldValue_5Mylh'>v{COMPILE_DATA.version}</div>
+          <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
+            <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+              <div className='gamepaddialog_FieldLabel_3b0U-'>BorealisOS Version</div>
+              <div className='gamepaddialog_FieldChildren_14_HB'>
+                <div className='gamepaddialog_LabelFieldValue_5Mylh'>v{COMPILE_DATA.version}</div>
               </div>
             </div>
           </div>
-          <div class='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
-            <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-              <div class='gamepaddialog_FieldLabel_3b0U-'>BorealisOS Environment</div>
-              <div class='gamepaddialog_FieldChildren_14_HB'>
-                <div class='gamepaddialog_LabelFieldValue_5Mylh'>{COMPILE_DATA.environment}</div>
+          <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
+            <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+              <div className='gamepaddialog_FieldLabel_3b0U-'>BorealisOS Environment</div>
+              <div className='gamepaddialog_FieldChildren_14_HB'>
+                <div className='gamepaddialog_LabelFieldValue_5Mylh'>{COMPILE_DATA.environment}</div>
               </div>
             </div>
           </div>
-          <div class='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
-            <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-              <div class='gamepaddialog_FieldLabel_3b0U-'>Hot Reloading</div>
-              <div class='gamepaddialog_FieldChildren_14_HB'>
-                <div class='gamepaddialog_LabelFieldValue_5Mylh'>{COMPILE_DATA.hotReloading}</div>
+          <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
+            <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+              <div className='gamepaddialog_FieldLabel_3b0U-'>Hot Reloading</div>
+              <div className='gamepaddialog_FieldChildren_14_HB'>
+                <div className='gamepaddialog_LabelFieldValue_5Mylh'>{COMPILE_DATA.hotReloading}</div>
               </div>
             </div>
           </div>
-          <div class='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
-            <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-              <div class='gamepaddialog_FieldLabel_3b0U-'>Service Installed</div>
-              <div class='gamepaddialog_FieldChildren_14_HB'>
-                <div class='gamepaddialog_LabelFieldValue_5Mylh'>False</div>
+          <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
+            <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+              <div className='gamepaddialog_FieldLabel_3b0U-'>Service Installed</div>
+              <div className='gamepaddialog_FieldChildren_14_HB'>
+                <div className='gamepaddialog_LabelFieldValue_5Mylh'>False</div>
               </div>
             </div>
           </div>
-          <div class='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
-            <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-              <div class='gamepaddialog_FieldLabel_3b0U-'>React Devtools Injected</div>
-              <div class='gamepaddialog_FieldChildren_14_HB'>
-                <div class='gamepaddialog_LabelFieldValue_5Mylh'>{window.__REACT_DEVTOOLS_GLOBAL_HOOK__ ? 'True' : 'False'}</div>
+          <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
+            <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+              <div className='gamepaddialog_FieldLabel_3b0U-'>React Devtools Injected</div>
+              <div className='gamepaddialog_FieldChildren_14_HB'>
+                <div className='gamepaddialog_LabelFieldValue_5Mylh'>{window.__REACT_DEVTOOLS_GLOBAL_HOOK__ ? 'True' : 'False'}</div>
               </div>
             </div>
           </div>
-          <div class='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
-            <div class='gamepaddialog_FieldLabelRow_H9WOq'>
-              <div class='gamepaddialog_FieldChildren_14_HB'>
-                <button type='button' class='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => window.borealisPush('uninject')}>Uninject</button>
+          <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
+            <div className='gamepaddialog_FieldLabelRow_H9WOq'>
+              <div className='gamepaddialog_FieldChildren_14_HB'>
+                <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => window.borealisPush('uninject')}>Uninject</button>
               </div>
             </div>
           </div>
         </div>
-        : <div class='borealis_settings_plugin'>
+        : <div className='borealis_settings_plugin'>
           {window.Borealis.plugins[currentPluginSettings].UI.settingsPage()}
           <button onClick={() => setCurrentPluginSettings(false)} className='DialogButton'>Go Back</button>
           </div>}

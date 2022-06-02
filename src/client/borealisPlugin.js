@@ -39,9 +39,6 @@ export default class BorealisPlugin {
   // Main Function, called when the plugin is loaded.
   async main () {}
 
-  // Called when the plugin is unloaded.
-  async unmount () {}
-
-  // Called when the plugin is hot-reloaded.
-  async duringHotReload () {}
+  // Called when the plugin is unloaded or hot reloaded.
+  async unload () {}
 }

@@ -119,9 +119,10 @@ module.exports = class borealisInjector {
 
     if (fs.existsSync(resolve(steamInstall, './backups'))) {
       fs.rmSync(resolve(steamInstall, './backups'), { recursive: true })
-      fs.mkdirSync(resolve(steamInstall, './backups'))
-      fs.mkdirSync(resolve(steamInstall, './backups/steamui'))
     }
+
+    fs.mkdirSync(resolve(steamInstall, './backups'))
+    fs.mkdirSync(resolve(steamInstall, './backups/steamui'))
 
     this.loadPatchFiles()
 
