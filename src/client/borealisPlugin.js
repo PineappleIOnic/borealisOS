@@ -39,6 +39,11 @@ export default class BorealisPlugin {
   // Main Function, called when the plugin is loaded.
   async main () {}
 
+  // Serverside Functions, Use this to perform nodeJS tasks. 
+  async server_main() {
+
+  }
+
   // Called when the plugin is unloaded or hot reloaded.
   async unload () {}
 }

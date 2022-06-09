@@ -11,11 +11,11 @@ module.exports = class bundler {
       version: require('../../package.json').version,
       platform: process.platform,
       arch: process.arch,
-      hotReloading: process.argv.includes('--hot-reload') ? 'True' : 'False',
+      hotReloading: !!process.argv.includes('--hot-reload'),
       environment: process.env.NODE_ENV || 'development'
     }
 
-    this.webpack = webpack({
+    this.webpackConf = {
       mode: 'development',
       entry: resolve('./src/client/borealisCore.js'),
       output: {
@@ -25,7 +25,8 @@ module.exports = class bundler {
       plugins: [
         new webpack.DefinePlugin({
           COMPILE_DATA: JSON.stringify(compileData)
-        })
+        }),
+        new webpack.HotModuleReplacementPlugin()
       ],
       module: {
         rules: [
@@ -47,7 +48,9 @@ module.exports = class bundler {
       resolve: {
         extensions: ['.js', '.jsx']
       }
-    })
+    }
+
+    this.webpack = webpack(this.webpackConf)
   }
 
   async bundle () {

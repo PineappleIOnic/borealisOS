@@ -1,5 +1,7 @@
 const BorealisPatch = require('../borealisPatch')
 const fs = require('fs')
+const { Parser } = require('acorn')
+const walk = require('acorn-walk')
 
 module.exports = class QuickAccessPatch extends BorealisPatch {
   constructor () {
@@ -16,9 +18,42 @@ module.exports = class QuickAccessPatch extends BorealisPatch {
 
   patch (file) {
     // Run patches...
-    let fileData = fs.readFileSync(file)
+    let fileData = fs.readFileSync(file).toString();
 
-    fileData = this.hookFunc(fileData, '}].filter((e=>!!e));', ' window.__BOREALIS__.quickAccessHook(E);') // TODO: Find a better, less likely to change detection method for this section of code.
+    // Utilise AST to detect and replace the function call, it's slower but it should be more reliable through updates.
+    const AST = Parser.parse(fileData, {
+      sourceType: 'module',
+      ecmaVersion: 'latest'
+    })
+
+    let result = null
+
+    walk.fullAncestor(AST, (node, _state, ancestors) => {
+      try {
+        if (node.value.type === 'Literal' && node.key.name === 'locId' && node.value.value === '#QuickAccess_Tab_Notifications_Title') {
+          // Walk back to the parent node
+          ancestors.forEach(node => {
+            if (node.type === 'VariableDeclaration') {
+              result = node
+            }
+          })
+        }
+      } catch {
+
+      }
+    })
+
+    if (!result) {
+      console.log('Failed to detect and patch Quick Access functions! Please File a bug report if this keeps occouring!')
+    }
+
+    let hookFunc = `window.__BOREALIS__.quickAccessHook(${result.declarations[1].id.name});`
+
+    fileData = fileData.slice(0, result.end) +
+    hookFunc +
+    fileData.slice(result.end, fileData.length)
+
+    fileData = fileData.toString().replace('visible:r&&t', 'visible: true') // TEMP, Enables the Valve Internal Settings Menu
 
     // Also add borealis modified tag.
     fileData = '/* BOREALIS MODIFIED */' + fileData

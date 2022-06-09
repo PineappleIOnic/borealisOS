@@ -92,11 +92,24 @@ module.exports = class Spotify extends BorealisPlugin {
     this.UI.settingsPage = (props) => {
       const React = window.SP_REACT
 
+      const authURL = new URL('https://accounts.spotify.com/authorize?')
+
+      authURL.search = new URLSearchParams({
+        client_id: 'bfb7ca6b2221490daf87ee9ea33b9c0a',
+        response_type: 'code',
+        redirect_uri: 'http://localhost:8080/callback',
+        scope: 'user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing'
+      })
+
       // const [authenticated, setAuthenticated] = React.useState(false);
+
+      const startAuth = () => {
+        window.location.replace(authURL)
+      }
 
       return (
         <div className='spotifySettingsPage'>
-          <button className='DialogButton' style={{ padding: '5px', borderRadius: '10px', marginBottom: '15px', background: '#1DB954', boxSizing: 'border-box' }}>Connect to Spotify</button>
+          <button onClick={startAuth} className='DialogButton' style={{ padding: '5px', borderRadius: '10px', marginBottom: '15px', background: '#1DB954', boxSizing: 'border-box' }}>Connect to Spotify</button>
         </div>
       )
     }
@@ -182,13 +195,13 @@ module.exports = class Spotify extends BorealisPlugin {
 
             <div className='now-playing__side' style={{ marginLeft: '10px' }}>
               <div className='now-playing__name' style={{ fontWeight: 'bold', color: 'white' }}>{
-                                current_track.name
-                            }
+                current_track.name
+              }
               </div>
 
               <div className='now-playing__artist'>{
-                                current_track.artists[0].name
-                            }
+                current_track.artists[0].name
+              }
               </div>
             </div>
           </div>
@@ -221,7 +234,9 @@ module.exports = class Spotify extends BorealisPlugin {
 
     // Remove the Web Player Script
     const script = document.getElementById('spotify-player')
-    script.remove()
+    if (script) {
+      script.remove()
+    }
 
     // Settings page and quickAccess is automatically removed by Borealis on unload.
   }

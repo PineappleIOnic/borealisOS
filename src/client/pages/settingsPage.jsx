@@ -139,7 +139,7 @@ export default (props) => {
               </div>
               <div className='gamepaddialog_FieldChildren_14_HB'>
                 <div className='updaterfield_UpdateStatusContainer_8OvE2'>
-                  {latestRelease == false || semver.lte(COMPILE_DATA.version, (latestRelease ? latestRelease.tag_name : '0.0.0'))
+                  {latestRelease && semver.gte(COMPILE_DATA.version, (latestRelease ? latestRelease.tag_name : '0.0.0'))
                     ? <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={checkUpdate} disabled={checkingForUpdate}>{checkingForUpdate ? 'Checking...' : 'Check For Updates'}</button>
                     : <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>Install {latestRelease.tag_name}</button>}
                 </div>
@@ -174,7 +174,7 @@ export default (props) => {
             <div className='gamepaddialog_FieldLabelRow_H9WOq'>
               <div className='gamepaddialog_FieldLabel_3b0U-'>Hot Reloading</div>
               <div className='gamepaddialog_FieldChildren_14_HB'>
-                <div className='gamepaddialog_LabelFieldValue_5Mylh'>{COMPILE_DATA.hotReloading}</div>
+                <div className='gamepaddialog_LabelFieldValue_5Mylh'>{COMPILE_DATA.hotReloading ? 'True' : 'False'}</div>
               </div>
             </div>
           </div>

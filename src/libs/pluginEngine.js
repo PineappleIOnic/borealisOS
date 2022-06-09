@@ -9,13 +9,6 @@ module.exports = class PluginEngine {
       logger.info('Transpiling Plugins...')
 
       // Read all plugins
-      try {
-        fs.accessSync(resolve('./plugins'))
-      } catch {
-        fs.mkdirSync(resolve('./plugins', { recursive: true }))
-        return
-      }
-
       const allPlugins = {}
 
       fs.readdirSync(resolve('./plugins')).forEach(file => {
@@ -38,5 +31,9 @@ module.exports = class PluginEngine {
         })
       })
     })
+
+    logger.info('Loading all serverside components...')
+
+
   }
 }

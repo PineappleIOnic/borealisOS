@@ -40,13 +40,11 @@ module.exports = class HotReload {
 
       const startTime = Date.now()
 
-      // TODO: Rewrite into webpack bundler and load the chunks into it.
-
       await this.bundler.bundle()
 
       copyFileSync(resolve('./dist/bundle.js'), resolve(this.injector.detectSteamInstall(), 'steamui/borealis/borealisCore.js'))
       this.injector.instance.SP.addScriptTag({ content: 'window.__BOREALIS__.uninject();' })
-      this.injector.instance.SP.addScriptTag({ path })
+      this.injector.instance.SP.addScriptTag({ path: resolve(this.injector.detectSteamInstall(), 'steamui/borealis/borealisCore.js') })
 
       logger.info(`Rebundled and Reloaded borealisCore in ${Date.now() - startTime}ms`)
     } else if (type === 'theme' && event === 'change') {

@@ -231,6 +231,14 @@ const Borealis = class {
   uninject () {
     // Rollback React Hooks
     window.SP_REACT.createElement = this.hooks.backups.createElement
+
+    // Unload all plugins
+    this.plugins.forEach(plugin => {
+      if (plugin.unload) {
+        plugin.unload()
+      }
+    })
+
     this.hooks.backups.focusNav.Unregister()
     this.removeTheme()
 
