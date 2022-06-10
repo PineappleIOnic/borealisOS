@@ -34,6 +34,12 @@ module.exports = class PluginEngine {
 
     logger.info('Loading all serverside components...')
 
+    fs.readdirSync(resolve('./plugins')).forEach(file => {
+      const { server_main } = require(resolve('./plugins', file))
 
+      if (server_main) {
+        server_main()
+      }
+    });
   }
 }

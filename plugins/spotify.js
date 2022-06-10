@@ -241,3 +241,7 @@ module.exports = class Spotify extends BorealisPlugin {
     // Settings page and quickAccess is automatically removed by Borealis on unload.
   }
 }
+
+module.exports.server_main = () => {
+  
+}
