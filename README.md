@@ -52,3 +52,12 @@ You can also develop on the PUBLIC-PAL build of Steam if you like to keep everyt
 <p align="center">
 <img height="500px" src="./assets/settingsPage.jpg" align="center"></img>
 </p>
+
+## Credits
+BorealisOS would not be possible without the following people:
+
+- [marios8534](https://github.com/marios8543) For creating the initial steamOS UI Inject. This opened my eyes to what was possible using CEF's debugging API and SteamOS.
+
+- [The SteamDeckHomebrew team](https://github.com/SteamDeckHomebrew) For continuing the work from marios8534's initial UI Inject.
+
+- [Jake 'sid' Smith](https://github.com/JakeSidSmith) For his excellent article on monkey patching React.
