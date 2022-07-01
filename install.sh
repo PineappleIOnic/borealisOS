@@ -22,15 +22,6 @@ if [[ ! $readonlyfs =~ "enabled" ]]; then
     echo "WARNING: This installer will temporarily mount the steamOS filesystem as write to install the service, it will be remounted as read-only after the installation is finished."
 fi
 
-printf 'Are you sure you want to install (y/n)? '
-old_stty_cfg=$(stty -g)
-stty raw -echo
-answer=$( while ! head -c 1 | grep -i '[ny]' ;do true ;done )
-stty $old_stty_cfg
-if echo "$answer" | grep -iq "^n" ;then
-    exit 0
-fi
-
 if [[ $readonlyfs =~ "enabled" ]]; then
     steamos-readonly disable
 fi

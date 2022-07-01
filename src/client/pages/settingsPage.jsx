@@ -7,6 +7,7 @@ export default (props) => {
   const [showInitialWarning, setShowInitialWarning] = React.useState(true)
   const [latestRelease, setlatestRelease] = React.useState(false)
   const [showReleaseNotes, setShowReleaseNotes] = React.useState(false)
+  const [isUpdating, setIsUpdating] = React.useState(false)
   const [currentPluginSettings, setCurrentPluginSettings] = React.useState(false)
   const [checkingForUpdate, setCheckingForUpdate] = React.useState(false)
 
@@ -40,6 +41,10 @@ export default (props) => {
     localStorage.setItem('borealisOS_initialWarning', 'true')
   }
 
+  const startUpdate = async () => {
+    await window.borealisPush('updateBorealis')
+  }
+
   const checkUpdate = async () => {
     setCheckingForUpdate(true)
     await window.borealisPush('getLatestRelease').then(data => {
@@ -62,30 +67,30 @@ export default (props) => {
       {currentPluginSettings === false
         ? <div className='borealis_settings_main'>
           {
-                    showInitialWarning &&
-                      <div
-                        style={{
-                          textAlign: 'justify',
-                          marginTop: '20px',
-                          borderRadius: '10px',
-                          boxShadow: '41px 41px 82px #06080b, -41px -41px 82px #16202b',
-                          padding: '10px',
-                          fontSize: '13px',
-                          boxSizing: 'border-box'
-                        }}
-                      >
-                        <p>
-                          BorealisOS is still currently under heavy development, there will be
-                          bugs, breakages and all sorts. BorealisOS does not currently have support for Steam's Controller NavMap
-                          system. This means that all Borealis Menus and UI will only work
-                          with the touch screen for now.
-                        </p>
+            showInitialWarning &&
+            <div
+              style={{
+                textAlign: 'justify',
+                marginTop: '20px',
+                borderRadius: '10px',
+                boxShadow: '41px 41px 82px #06080b, -41px -41px 82px #16202b',
+                padding: '10px',
+                fontSize: '13px',
+                boxSizing: 'border-box'
+              }}
+            >
+              <p>
+                BorealisOS is still currently under heavy development, there will be
+                bugs, breakages and all sorts. BorealisOS does not currently have support for Steam's Controller NavMap
+                system. This means that all Borealis Menus and UI will only work
+                with the touch screen for now.
+              </p>
 
-                        <button onClick={handleWarningClose} className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>
-                          Ok, I understand.
-                        </button>
-                      </div>
-                }
+              <button onClick={handleWarningClose} className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>
+                Ok, I understand.
+              </button>
+            </div>
+          }
 
           <div className='DialogControlsSectionHeader'>Plugins</div>
           {Object.keys(window.Borealis.plugins).map(key => {
@@ -139,15 +144,15 @@ export default (props) => {
                 <div className='updaterfield_UpdateStatusContainer_8OvE2'>
                   {latestRelease && semver.gte(COMPILE_DATA.version, (latestRelease ? latestRelease.tag_name : '0.0.0'))
                     ? <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={checkUpdate} disabled={checkingForUpdate}>{checkingForUpdate ? 'Checking...' : 'Check For Updates'}</button>
-                    : <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>Install {latestRelease.tag_name}</button>}
+                    : <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={startUpdate} >Install {latestRelease.tag_name}</button>}
                 </div>
               </div>
             </div>
             <div className='gamepaddialog_FieldDescription_2OJfk'>Current Version: {COMPILE_DATA.version}, GitHub Version: {
-                        latestRelease == false
-                          ? 'Checking...'
-                          : latestRelease.tag_name
-}{COMPILE_DATA.version == latestRelease.tag_name ? ' (Up to date)' : ''}
+              latestRelease == false
+                ? 'Checking...'
+                : latestRelease.tag_name
+            }{COMPILE_DATA.version == latestRelease.tag_name ? ' (Up to date)' : ''}
             </div>
           </div>
 
@@ -203,7 +208,7 @@ export default (props) => {
         : <div className='borealis_settings_plugin'>
           {window.Borealis.plugins[currentPluginSettings].UI.settingsPage()}
           <button onClick={() => setCurrentPluginSettings(false)} className='DialogButton'>Go Back</button>
-          </div>}
+        </div>}
     </div>
   )
 }
