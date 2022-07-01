@@ -1,5 +1,3 @@
-import { SemVer } from 'semver'
-
 export default (props) => {
   const React = window.SP_REACT
   const semver = require('semver')

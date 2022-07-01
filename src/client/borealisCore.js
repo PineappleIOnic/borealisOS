@@ -80,16 +80,6 @@ const Borealis = class {
     return result
   }
 
-  async pollServer () {
-    console.log('Polling server.')
-    this.serverData = {
-      currentTheme: await window.borealisPush('currentTheme'),
-      availableThemes: await window.borealisPush('getThemes')
-    }
-
-    this.serverPoll()
-  }
-
   handleCommunication (event, data) {
     console.log('Recieved Event: ' + event)
 
@@ -119,11 +109,30 @@ const Borealis = class {
 
       const plugin = new module.exports()
 
-      plugin.main()
+      // Get config
+      window.borealisPush('pluginConfigGet', plugin.pluginInfo.name).then(data => {
+        plugin.config = new Proxy(data || {}, {
+          set: function (target, key, value) {
+            target[key] = value
 
-      console.log('Loaded Plugin: ' + plugin.pluginInfo.name)
+            // Send Data to backend
+            const data = {
+              name: plugin.pluginInfo.name,
+              key: key,
+              value: value
+            }
+            window.borealisPush('pluginConfigSet', data)
 
-      this.plugins.push(plugin)
+            console.log(`Config object got updated. Result: ${target}`)
+            return true
+          }
+        })
+
+        plugin.main()
+
+        console.log('Successfully Loaded Plugin: ' + plugin.pluginInfo.name)
+        this.plugins.push(plugin)
+      })
     } catch (e) {
       console.log('Failed to load plugin: ' + data.name)
       console.error(e)

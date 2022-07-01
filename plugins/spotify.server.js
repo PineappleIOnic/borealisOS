@@ -28,7 +28,41 @@ module.exports = class Spotify extends BorealisPluginServer {
 
     const app = express()
 
-    app.get('/callback', (req, res) => {
+    this.communicator.registerEventHook('spotifyRefreshToken', async (data) => {
+      logger.info('Refreshing Spotify token...')
+
+      const requestParams = new URLSearchParams()
+      requestParams.append('grant_type', 'refresh_token')
+      requestParams.append('refresh_token', data.refresh_token)
+
+      try {
+        const tokenResponse = await axios.post('https://accounts.spotify.com/api/token', requestParams, {
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${this.config.spotify_client_id}:${this.config.spotify_client_secret}`).toString('base64')}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+
+        const profileResponse = await axios.get('https://api.spotify.com/v1/me', {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.data.access_token}`
+          }
+        })
+
+        logger.info('Successfully authenticated with Spotify!')
+
+        this.communicator.send('spotify_auth_success', {
+          data_time: Date.now(),
+          ...tokenResponse.data,
+          ...profileResponse.data
+        })
+      } catch (err) {
+        logger.error(`Failed to authenticate with Spotify!, Err: ${err}`)
+        res.send('Authentication Failed. Check BorealisOS logs for this plugin.')
+      }
+    })
+
+    app.get('/callback', async (req, res) => {
       logger.info('Recieved authentication code, attempting to auth...')
 
       const requestParams = new URLSearchParams()
@@ -37,17 +71,29 @@ module.exports = class Spotify extends BorealisPluginServer {
       requestParams.append('redirect_uri', 'http://localhost:27056/callback')
 
       try {
-        axios.post('https://accounts.spotify.com/api/token', requestParams, {
+        const tokenResponse = await axios.post('https://accounts.spotify.com/api/token', requestParams, {
           headers: {
             Authorization: `Basic ${Buffer.from(`${this.config.spotify_client_id}:${this.config.spotify_client_secret}`).toString('base64')}`,
             'Content-Type': 'application/x-www-form-urlencoded'
           }
-        }).then(response => {
-          logger.info('Successfully authenticated with Spotify!')
-
-          this.communicator.send('spotify_auth_success', response.data)
-          res.send('Authentication Successful, you can now close this page.')
         })
+
+        console.log(tokenResponse.data.access_token)
+
+        const profileResponse = await axios.get('https://api.spotify.com/v1/me', {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.data.access_token}`
+          }
+        })
+
+        logger.info('Successfully authenticated with Spotify!')
+
+        this.communicator.send('spotify_auth_success', {
+          data_time: Date.now(),
+          ...tokenResponse.data,
+          ...profileResponse.data
+        })
+        res.send('Authentication Successful, you can now close this page.')
       } catch (err) {
         logger.error(`Failed to authenticate with Spotify!, Err: ${err}`)
         res.send('Authentication Failed. Check BorealisOS logs for this plugin.')

@@ -34,6 +34,11 @@ module.exports = class Spotify extends BorealisPlugin {
   }
 
   initialisePlayer () {
+    if (this.config.authenticationData && this.config.authenticationData.data_time + this.config.authenticationData.expires_in * 1000 < Date.now()) {
+      // Token has expired, refresh it.
+      window.borealisPush('spotifyRefreshToken', this.config.authenticationData)
+    }
+
     this.player = new window.Spotify.Player({
       name: 'Steam Deck',
       getOAuthToken: cb => {
@@ -106,9 +111,24 @@ module.exports = class Spotify extends BorealisPlugin {
         window.location.replace(authURL)
       }
 
+      const unlinkAccount = () => {
+       this.config.authenticationData = null
+      }
+
       return (
         <div className='spotifySettingsPage'>
-          <button onClick={startAuth} className='DialogButton' style={{ padding: '5px', borderRadius: '10px', marginBottom: '15px', background: '#1DB954', boxSizing: 'border-box' }}>Connect to Spotify</button>
+          {!this.config.authenticationData && <button onClick={startAuth} className='DialogButton' style={{ padding: '5px', borderRadius: '10px', marginBottom: '15px', background: '#1DB954', boxSizing: 'border-box' }}>Connect to Spotify</button>}
+          {this.config.authenticationData &&
+            <div className='spotifySettingsPageProfile'>
+              <h1>Linked Profile</h1>
+              <div style={{ display: 'flex' }}><img src={this.config.authenticationData.images[0].url} style={{ height: '100px', width: '100px', objectFit: 'cover', borderRadius: '50px' }} />
+                <div style={{ marginLeft: '10px' }}>
+                  <h1 style={{ marginBottom: '0px', marginTop: '0px' }}>{this.config.authenticationData.display_name}</h1>
+                  <p style={{ marginTop: '0px' }}>{this.config.authenticationData.id}</p>
+                </div>
+              </div>
+              <button style={{ marginTop: '20px' }} onClick={unlinkAccount} class='DialogButton'>Unlink Account</button>
+            </div>}
         </div>
       )
     }
@@ -165,11 +185,6 @@ module.exports = class Spotify extends BorealisPlugin {
         setDurationInteval(setInterval(() => {
           this.player.getCurrentState().then(state => {
             if (!state) { return }
-
-            console.log(state)
-
-            console.log((state.position / state.duration) * 100)
-
             setTimeElapsed((state.position / state.duration) * 100)
           })
         }, 500))

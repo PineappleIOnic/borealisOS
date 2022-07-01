@@ -20,7 +20,24 @@ export default class BorealisPlugin {
 
     // All data set in here will automatically get saved and reloaded when the plugin is loaded.
     // This is persistent data.
-    this.config = {}
+    this.configProtected = {}
+
+    this.config = new Proxy(this.configProtected, {
+      set: function (target, key, value) {
+        target[key] = value
+
+        // Send Data to backend
+        const data = {
+          name: this.pluginInfo.name,
+          key: key,
+          value: value
+        }
+        window.borealisPush('pluginConfigSet', data)
+
+        console.log(`Config object got updated. Result: ${target}`)
+        return true
+      }.bind(this)
+    })
 
     // This is a helper library for registering UI elements.
     // Do not overwrite when extending.
@@ -44,11 +61,11 @@ export default class BorealisPlugin {
   // event name.
 
   // For instance, a plugin that is called 'spotify' will recieve events with the `spotify_` prefix.
-  async handleCommunication (event, data) {}
+  async handleCommunication (event, data) { }
 
   // Main Function, called when the plugin is loaded.
-  async main () {}
+  async main () { }
 
   // Called when the plugin is unloaded or hot reloaded.
-  async unload () {}
+  async unload () { }
 }

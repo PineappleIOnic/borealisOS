@@ -36,6 +36,14 @@ module.exports = class PluginEngine {
       })
     })
 
+    communicator.registerEventHook('pluginConfigSet', (data) => {
+      global.keystore.writeKey(`plugin_${data.name}`, { [data.key]: data.value })
+    })
+
+    communicator.registerEventHook('pluginConfigGet', (name) => {
+      return global.keystore.readKey(`plugin_${name}`)
+    })
+
     this.plugins = []
 
     logger.info('Loading all serverside components...')

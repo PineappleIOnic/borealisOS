@@ -1,7 +1,7 @@
 /* A port of  https://github.com/ungstein/OG-Steam-Library to the deck's UI */
 
 * {
-	font-family: "Tahoma" !important;
+	font-family: "Tahoma";
 	font-weight: 100 !important;
 	border-radius: 0px !important;
 	box-shadow: none !important;
@@ -20,7 +20,9 @@
 	--Label: #a0aa95 !important;
 	--DimListText: #758666 !important;
 	--DisabledText1: #75806f !important;
-	--DisabledText2: #282e22 !important; }
+	--DisabledText2: #282e22 !important; 
+	--left-track-color: #c4b550 !important;
+}
 
 body,
 body.shared_common_v6_2Lxgd {
@@ -221,7 +223,7 @@ button.DialogButton.Primary:enabled:hover:active {
 }
 
 .backgroundglass_BackgroundGlass_3rsrz.backgroundglass_DrawBackground_2NQoF {
-	background-color: var(--GreenBG);
+	background-color: rgba(76, 88, 68, .85);
 }
 
 .gamepadtabbedpage_TabContentsScroll_1X4dt {
@@ -2664,4 +2666,52 @@ button.DialogButton:disabled, button.DialogButton:disabled:hover {
 
 .library_Container_3xRRJ *::-webkit-scrollbar-corner, .library_LibraryContextMenu_1UOkn::-webkit-scrollbar-corner {
 	background-color: var(--LightGreenBG);
+}
+
+.gamepadpagedsettings_PagedSettingsDialog_PageListColumn_2EZ3o {
+	background: var(--LightGreenBG);
+}
+
+.gamepadpagedsettings_PagedSettingsDialog_PageListItem_1ix7r.gamepadpagedsettings_Active_22LLB {
+	background: var(--DarkGreenBG);
+}
+
+.mainmenu_Item_2w9Tp:focus:hover {
+	background: var(--DarkGreenBG);
+}
+
+.mainmenu_Item_2w9Tp:hover {
+	background: var(--DarkGreenBG);
+}
+
+.quickaccessmenu_QuickAccessMenu_V0cr- {
+    background: var(--LightGreenBG);
+}
+
+.quickaccessmenu_Title_34nl5 {
+	background: var(--LightGreenBG);
+}
+
+.quickaccessmenu_Tab_1S76C {
+	background: var(--LightGreenBG);
+}
+
+@keyframes quickaccessmenu_ItemFocusAnim-darkerGrey-nocolor_2YeD3 {
+    from {
+        background: var(--LightGreenBG)
+    }
+
+    to {
+        background: var(--DarkGreenBG)
+    }
+}
+
+@keyframes gamepadpagedsettings_ItemFocusAnim-darkGrey_3qFxl {
+	from {
+        background: var(--LightGreenBG)
+    }
+
+    to {
+        background: var(--DarkGreenBG)
+    }
 }

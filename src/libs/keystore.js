@@ -3,7 +3,7 @@ const fs = require('fs')
 const logger = new (require('./log'))('keystore')
 
 module.exports = class Keystore {
-  constructor () {
+  constructor (communicator) {
     // Load borealisData
 
     const BorealisAppdata = resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
@@ -13,20 +13,20 @@ module.exports = class Keystore {
 
     if (!fs.existsSync(BorealisAppdata)) {
       fs.mkdirSync(BorealisAppdata, { recursive: true })
-      fs.writeFileSync(this.path, JSON.stringify({}))
+      fs.writeFileSync(this.path, JSON.stringify({}, null, 2))
     } else {
       try {
         this.data = JSON.parse(fs.readFileSync(this.path))
       } catch {
         logger.warning('borealisData.json missing or corrupted, regenerating...')
-        fs.writeFileSync(resolve(BorealisAppdata, 'borealisData.json'), JSON.stringify({}))
+        fs.writeFileSync(resolve(BorealisAppdata, 'borealisData.json'), JSON.stringify({}, null, 2))
       }
     }
   }
 
   writeKey (key, data) {
     this.data[key] = data
-    fs.writeFileSync(this.path, JSON.stringify(this.data))
+    fs.writeFileSync(this.path, JSON.stringify(this.data, null, 2))
   }
 
   readKey (key) {
