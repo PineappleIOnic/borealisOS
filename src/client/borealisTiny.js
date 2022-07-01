@@ -5,23 +5,29 @@ if (window.Borealis) {
 }
 
 Borealis = class {
-  constructor () {
+  constructor() {
     console.log('BorealisT Client Initialised!')
 
     this.communicatorOnline = false
+
+    if (window.borealisPush) {
+      this.setCommunicatorOnline()
+    }
   }
 
-  async setCommunicatorOnline () {
+  async setCommunicatorOnline() {
     this.communicatorOnline = true
 
     const theme = await window.borealisPush('currentTheme')
 
-    if (theme.name !== 'Default (SteamOS Holo)') {
-      this.setTheme(theme.content)
+    if (theme) {
+      if (theme.name !== 'Default (SteamOS Holo)') {
+        this.setTheme(theme.content)
+      }
     }
   }
 
-  setTheme (style) {
+  setTheme(style) {
     // Check if we already have a theme enabled.
     if (document.getElementById('borealis_theme')) {
       document.getElementById('borealis_theme').innerHTML = style
@@ -33,13 +39,13 @@ Borealis = class {
     }
   }
 
-  removeTheme () {
+  removeTheme() {
     if (document.getElementById('borealis_theme')) {
       document.getElementById('borealis_theme').remove()
     }
   }
 
-  uninject () {
+  uninject() {
     this.removeTheme()
   }
 }

@@ -78,8 +78,6 @@ module.exports = class Spotify extends BorealisPluginServer {
           }
         })
 
-        console.log(tokenResponse.data.access_token)
-
         const profileResponse = await axios.get('https://api.spotify.com/v1/me', {
           headers: {
             Authorization: `Bearer ${tokenResponse.data.access_token}`
