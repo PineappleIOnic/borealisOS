@@ -98,12 +98,19 @@ const Borealis = class {
         this.handlePlugin(data)
       }
     }
+
+    // Check if event corresponds to a plugin
+    this.plugins.forEach(plugin => {
+      if (event.toLowerCase().startsWith(plugin.pluginInfo.name.toLowerCase())) {
+        plugin.handleCommunication(event, data)
+      }
+    })
   }
 
   handlePlugin (data) {
     console.log('Recieved Plugin Data.')
 
-    const BorealisPlugin = require('./borealisPlugin.js').default // eslint-disable-line
+    const BorealisPlugin = require('./borealisPlugin.client.js').default // eslint-disable-line
 
     try {
       const module = {}

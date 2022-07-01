@@ -13,11 +13,14 @@ export default class BorealisPlugin {
       name: '',
       description: '',
       author: '',
-      thumbnail: '', // Can be URL, Base64, or SVG.
       version: '',
       dependencies: [],
       config: []
     }
+
+    // All data set in here will automatically get saved and reloaded when the plugin is loaded.
+    // This is persistent data.
+    this.config = {}
 
     // This is a helper library for registering UI elements.
     // Do not overwrite when extending.
@@ -36,13 +39,16 @@ export default class BorealisPlugin {
     }
   }
 
+  // Communication handler, called when a event for this plugin is recieved on client.
+  // To send a event to a plugin from serverside make sure to prefix it with your
+  // event name.
+
+  // For instance, a plugin that is called 'spotify' will recieve events with the `spotify_` prefix.
+  async handleCommunication (event, data) {}
+
   // Main Function, called when the plugin is loaded.
   async main () {}
 
   // Called when the plugin is unloaded or hot reloaded.
   async unload () {}
 }
-
-// Serverside Functions, Use this to perform nodeJS tasks. 
-module.exports.server_main = () => {}
-

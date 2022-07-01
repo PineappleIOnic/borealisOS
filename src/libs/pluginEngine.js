@@ -6,12 +6,16 @@ const babel = require('@babel/core')
 module.exports = class PluginEngine {
   constructor (injectorInstance, communicator) {
     communicator.registerEventHook('loadPlugins', () => {
-      logger.info('Transpiling Plugins...')
+      logger.info('Transpiling ClientSide Plugins...')
 
       // Read all plugins
       const allPlugins = {}
 
       fs.readdirSync(resolve('./plugins')).forEach(file => {
+        if (!file.endsWith('.client.js')) {
+          return
+        }
+
         // Read file
         const data = fs.readFileSync(resolve('./plugins', file)).toString()
 
@@ -32,14 +36,23 @@ module.exports = class PluginEngine {
       })
     })
 
+    this.plugins = []
+
     logger.info('Loading all serverside components...')
 
     fs.readdirSync(resolve('./plugins')).forEach(file => {
-      const { server_main } = require(resolve('./plugins', file))
-
-      if (server_main) {
-        server_main()
+      if (!file.endsWith('.server.js')) {
+        return
       }
-    });
+      try {
+        const Plugin = new (require(resolve('./plugins', file)))(communicator)
+
+        if (Plugin.main) {
+          Plugin.main()
+        }
+      } catch (e) {
+        logger.error(`Failed to load ${file}: ${e}`)
+      }
+    })
   }
 }

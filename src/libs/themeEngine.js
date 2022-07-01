@@ -1,4 +1,3 @@
-const keystore = global.keystore
 const fs = require('fs')
 const { resolve } = require('path')
 const logger = new (require('./log'))('Theme Engine')

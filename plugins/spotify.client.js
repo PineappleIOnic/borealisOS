@@ -2,7 +2,6 @@
 
 module.exports = class Spotify extends BorealisPlugin {
   // An Example Integration for BorealisOS
-
   constructor () {
     super()
     this.pluginInfo = {
@@ -10,76 +9,75 @@ module.exports = class Spotify extends BorealisPlugin {
       description: 'A Spotify integration for SteamOS',
       author: 'IOnicisere',
       version: '1.0.0',
-      dependencies: ['borealis-core'],
-      config: [
-        // Config is a list of variables that you want borealis to save persistently.
-        // They will be automatically saved and loaded on initialisation and accessible through
-        // this.config.variableName
-
-        // Example:
-        {
-          name: 'spotify_client_id',
-          type: 'string',
-          default: '',
-          description: 'Spotify Client ID'
-        },
-        {
-          name: 'spotify_client_secret',
-          type: 'string',
-          default: '',
-          description: 'Spotify Client Secret'
-        },
-
-        // You are also able to define buttons in the plugin settings.
-        {
-          name: 'spotify_login',
-          type: 'button',
-          description: 'Login to Spotify',
-          callback: this.login // This will call this plugin's Login function.
-        }
-      ]
+      dependencies: ['borealis-core']
     }
   }
 
-  async main () {
-    // This is a main initialization thread for your plugin. You can do anything here.
+  // Communication handler, called when a event for this plugin is recieved on client.
+  // To send a event to a plugin from serverside make sure to prefix it with your
+  // event name.
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const token = 'TOKEN' // TODO: Implement authentication into settings page
-      this.player = new window.Spotify.Player({
-        name: 'Steam Deck',
-        getOAuthToken: cb => { cb(token) },
-        volume: 0.5
-      })
-
-      window.spotifyplayer = this.player
-
-      // Ready
-      this.player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id)
-      })
-
-      // Not Ready
-      this.player.addListener('not_ready', ({ device_id }) => {
-        console.log('Device ID has gone offline', device_id)
-      })
-
-      this.player.addListener('initialization_error', ({ message }) => {
-        console.error(message)
-      })
-
-      this.player.addListener('authentication_error', ({ message }) => {
-        console.error(message)
-      })
-
-      this.player.addListener('account_error', ({ message }) => {
-        console.error(message)
-      })
-
-      this.player.connect()
-
-      console.log('Spotify Web Player Initialized')
+  // For instance, this plugin will recieve events with the `spotify_` prefix.
+  async handleCommunication (event, data) {
+    switch (event) {
+      case 'spotify_auth_success':
+        // Called when the user has successfully authenticated with Spotify
+        this.login(data)
     }
+  }
+
+  async login (data) {
+    this.config.authenticationData = data
+
+    // Reinitialise player with new auth data.
+    this.authCB(this.config.authenticationData.access_token)
+  }
+
+  initialisePlayer () {
+    this.player = new window.Spotify.Player({
+      name: 'Steam Deck',
+      getOAuthToken: cb => {
+        if (this.config.authenticationData) {
+          cb(this.config.authenticationData.access_token)
+        };
+
+        this.authCB = cb
+      },
+      volume: 1
+    })
+
+    window.spotifyplayer = this.player
+
+    // Ready
+    this.player.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id)
+    })
+
+    // Not Ready
+    this.player.addListener('not_ready', ({ device_id }) => {
+      console.log('Device ID has gone offline', device_id)
+    })
+
+    this.player.addListener('initialization_error', ({ message }) => {
+      console.error(message)
+    })
+
+    this.player.addListener('authentication_error', ({ message }) => {
+      console.error(message)
+    })
+
+    this.player.addListener('account_error', ({ message }) => {
+      console.error(message)
+    })
+
+    this.player.connect()
+
+    console.log('Spotify Web Player Initialized')
+  }
+
+  async main () {
+    // This is a main initialization thread for your plugin.
+    window.onSpotifyWebPlaybackSDKReady = this.initialisePlayer.bind(this)
 
     if (!window.Spotify) {
       // Initialise Web Player
@@ -97,8 +95,9 @@ module.exports = class Spotify extends BorealisPlugin {
       authURL.search = new URLSearchParams({
         client_id: 'bfb7ca6b2221490daf87ee9ea33b9c0a',
         response_type: 'code',
-        redirect_uri: 'http://localhost:8080/callback',
-        scope: 'user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing'
+        redirect_uri: 'http://localhost:27056/callback',
+        scope: 'streaming user-read-email user-read-private',
+        show_dialog: true
       })
 
       // const [authenticated, setAuthenticated] = React.useState(false);
@@ -240,8 +239,4 @@ module.exports = class Spotify extends BorealisPlugin {
 
     // Settings page and quickAccess is automatically removed by Borealis on unload.
   }
-}
-
-module.exports.server_main = () => {
-  
 }

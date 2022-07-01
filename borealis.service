@@ -1,0 +1,14 @@
+[Unit]
+Description=BorealisOS
+Documentation=https://github.com/pineappleionic/BorealisOS/src/index.js
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/deck/.local/share/borealisOS
+ExecStart=/home/deck/.local/share/borealisOS/node/bin/node src/index.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

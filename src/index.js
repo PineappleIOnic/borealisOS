@@ -9,6 +9,7 @@ const HotReload = require('./libs/hotReload')
 const ThemeEngine = require('./libs/themeEngine')
 const PluginEngine = require('./libs/pluginEngine')
 const UpdateHandler = require('./libs/updateHandler')
+require('dotenv').config()
 
 global.keystore = new (require('./libs/keystore.js'))()
 
@@ -42,6 +43,13 @@ function generateUILib (injector) {
 
 async function init () {
   const injector = new borealisInjector()
+
+  // Quick check to ensure CEF Debugging is enabled.
+  if (!fs.existsSync(path.resolve(injector.detectSteamInstall(), '.cef-enable-remote-debugging'))) {
+    fs.writeFileSync(path.resolve(injector.detectSteamInstall(), '.cef-enable-remote-debugging'), '')
+    logger.error('CEF Debugging is not enabled. BorealisOS has enabled it for you. Please restart Steam and try again.')
+    process.exit(1)
+  }
 
   generateUILib(injector)
 

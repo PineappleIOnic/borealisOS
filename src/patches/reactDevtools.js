@@ -23,7 +23,6 @@ module.exports = class CorePatch extends BorealisPatch {
       console.log('Injecting React Devtools, Make sure you have run "create_react_tunnel.sh" on your development machine.')
     }
 
-    const BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
     let fileData = fs.readFileSync(file)
 
     if (!fs.existsSync(path.resolve(steamInstall, 'steamui') + '/borealis')) {
@@ -32,7 +31,7 @@ module.exports = class CorePatch extends BorealisPatch {
 
     const devtools = fs.createWriteStream(path.resolve(steamInstall, 'steamui') + '/borealis/devtools.js')
     const promise = new Promise((resolve, reject) => {
-      const request = http.get('http://localhost:8097', function (response) {
+      http.get('http://localhost:8097', function (response) {
         response.pipe(devtools)
 
         // after download completed close filestream

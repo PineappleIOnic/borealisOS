@@ -19,7 +19,7 @@ module.exports = class CorePatch extends BorealisPatch {
   }
 
   async patch (file, steamInstall) {
-    const BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
+    const BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform === 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
     let fileData = fs.readFileSync(file)
 
     if (fileData.includes('BOREALIS MODIFIED')) {

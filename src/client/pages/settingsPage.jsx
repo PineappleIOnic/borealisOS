@@ -182,7 +182,7 @@ export default (props) => {
             <div className='gamepaddialog_FieldLabelRow_H9WOq'>
               <div className='gamepaddialog_FieldLabel_3b0U-'>Service Installed</div>
               <div className='gamepaddialog_FieldChildren_14_HB'>
-                <div className='gamepaddialog_LabelFieldValue_5Mylh'>False</div>
+                <div className='gamepaddialog_LabelFieldValue_5Mylh'>{COMPILE_DATA.serviceInstalled ? 'True' : 'False'}</div>
               </div>
             </div>
           </div>
@@ -197,7 +197,7 @@ export default (props) => {
           <div className='gamepaddialog_Field_S-_La gamepaddialog_WithFirstRow_qFXi6 gamepaddialog_VerticalAlignCenter_3XNvA gamepaddialog_InlineWrapShiftsChildrenBelow_pHUb6 gamepaddialog_WithBottomSeparatorStandard_3s1Rk gamepaddialog_StandardPadding_XRBFu gamepaddialog_Clickable_27UVY gamepaddialog_HighlightOnFocus_wE4V6 Panel Focusable' tabindex='0'>
             <div className='gamepaddialog_FieldLabelRow_H9WOq'>
               <div className='gamepaddialog_FieldChildren_14_HB'>
-                <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => window.borealisPush('uninject')}>Uninject</button>
+                <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => window.borealisPush('uninject')}>Eject</button>
               </div>
             </div>
           </div>

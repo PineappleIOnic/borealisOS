@@ -4,6 +4,7 @@
  */
 const webpack = require('webpack')
 const { resolve } = require('path')
+const fs = require('fs')
 
 module.exports = class bundler {
   constructor () {
@@ -12,7 +13,8 @@ module.exports = class bundler {
       platform: process.platform,
       arch: process.arch,
       hotReloading: !!process.argv.includes('--hot-reload'),
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
+      serviceInstalled: fs.existsSync('/etc/systemd/system/borealisOS.service')
     }
 
     this.webpackConf = {

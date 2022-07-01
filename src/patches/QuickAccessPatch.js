@@ -18,7 +18,7 @@ module.exports = class QuickAccessPatch extends BorealisPatch {
 
   patch (file) {
     // Run patches...
-    let fileData = fs.readFileSync(file).toString();
+    let fileData = fs.readFileSync(file).toString()
 
     // Utilise AST to detect and replace the function call, it's slower but it should be more reliable through updates.
     const AST = Parser.parse(fileData, {
@@ -47,13 +47,11 @@ module.exports = class QuickAccessPatch extends BorealisPatch {
       console.log('Failed to detect and patch Quick Access functions! Please File a bug report if this keeps occouring!')
     }
 
-    let hookFunc = `window.__BOREALIS__.quickAccessHook(${result.declarations[1].id.name});`
+    const hookFunc = `window.__BOREALIS__.quickAccessHook(${result.declarations[1].id.name});`
 
     fileData = fileData.slice(0, result.end) +
     hookFunc +
     fileData.slice(result.end, fileData.length)
-
-    fileData = fileData.toString().replace('visible:r&&t', 'visible: true') // TEMP, Enables the Valve Internal Settings Menu
 
     // Also add borealis modified tag.
     fileData = '/* BOREALIS MODIFIED */' + fileData
