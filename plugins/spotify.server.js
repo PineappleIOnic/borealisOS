@@ -1,6 +1,6 @@
 const fetch = require('cross-fetch')
 const BorealisPluginServer = require('../src/borealisPlugin.server')
-const logger = new (require('../src/libs/log'))('Plugin Engine', 'Spotify')
+const logger = new (require('../src/libs/log'))('Plugin', 'Spotify')
 
 module.exports = class Spotify extends BorealisPluginServer {
   constructor (communicator) {
