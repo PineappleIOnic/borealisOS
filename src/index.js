@@ -14,7 +14,7 @@ require('dotenv').config()
 
 global.keystore = new (require('./libs/keystore.js'))()
 
-function generateUILib(injector) {
+function generateUILib (injector) {
   const BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
 
   const currentSpData = fs.readFileSync(path.resolve(injector.detectSteamInstall(), 'steamui/sp.js'))
@@ -42,7 +42,7 @@ function generateUILib(injector) {
   }
 }
 
-async function init() {
+async function init () {
   const injector = new borealisInjector()
 
   // Quick check to ensure CEF Debugging is enabled.
@@ -65,17 +65,17 @@ async function init() {
   await communicator.init(injector)
 
   // Watch steam files ready for a restart, since steam will roll back borealis files to default ones.
-  logger.info('Watching Steam files ready for repatch');
+  logger.info('Watching Steam files ready for repatch')
   chokidar.watch(borealisInjector.detectSteamInstall() + '/steamui').on('all', async (event, path) => {
     if (event === 'change' && path.endsWith('index.html')) {
       if (!fs.readFileSync(path).includes('BOREALIS MODIFIED')) {
         logger.info('Steam has rolled back BorealisOS changes! Repatching files now...')
         // Wait ten seconds for steam to finish updating.
-        await new Promise((res) => { setTimeout(res, 10000) });
-        await injector.inject(BorealisAppdata);
+        await new Promise((res) => { setTimeout(res, 10000) })
+        await injector.inject(BorealisAppdata)
 
         // Reinitialise Communicator
-        communicator.finaliseInit();
+        communicator.finaliseInit()
 
         logger.info('Successfully repatched files.')
       }
@@ -97,7 +97,7 @@ async function init() {
     process.exit()
   })
 
-  async function shutdown() {
+  async function shutdown () {
     logger.info('Shutting down BorealisOS')
 
     await injector.uninject()

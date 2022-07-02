@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer-core')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
-const axios = require('axios').default
+const fetch = require('node-fetch')
 const logger = new (require('./log'))('Injector')
 const fs = require('fs')
 const { resolve } = require('path')
@@ -40,12 +40,12 @@ module.exports = class borealisInjector {
 
   async getCEFData () {
     for (let i = 0; i < 4; i++) {
-      const response = await axios.get('http://localhost:8080/json/version', { validateStatus: () => true }).then(
-        data => data.data
-      ).catch((err) => {
-        logger.warning('Something went wrong attempt to contact debugger, retrying in 5 seconds...')
-        return false
-      })
+      const response = fetch('http://localhost:8080/json/version')
+        .then(response => response.json())
+        .catch((err) => {
+          logger.warning('Something went wrong attempt to contact debugger, retrying in 5 seconds...')
+          return false
+        })
 
       if (response !== false) {
         return response
@@ -213,6 +213,20 @@ module.exports = class borealisInjector {
   }
 }
 
+// Check if steam is running
+const isSteamRunning = async () => {
+  switch (process.platform) {
+    case 'win32': command = 'tasklist'; break
+    case 'darwin': command = 'ps -ax | grep steamwebhelper'; break
+    case 'linux': command = 'ps -ax | grep steamwebhelper'; break
+    default: break
+  }
+  const response = await exec(command)
+  if (response.stdout.toLowerCase().includes('steamwebhelper')) {
+    return true
+  }
+}
+
 module.exports.detectSteamInstall = function () {
   const locations = [
     'C:/Program Files (x86)/Steam/',
@@ -234,18 +248,4 @@ module.exports.detectSteamInstall = function () {
   })
 
   return detectedLocation
-}
-
-// Check if steam is running
-const isSteamRunning = async () => {
-  switch (process.platform) {
-    case 'win32': command = 'tasklist'; break
-    case 'darwin': command = 'ps -ax | grep steamwebhelper'; break
-    case 'linux': command = 'ps -ax | grep steamwebhelper'; break
-    default: break
-  }
-  const response = await exec(command)
-  if (response.stdout.toLowerCase().includes('steamwebhelper')) {
-    return true
-  }
 }

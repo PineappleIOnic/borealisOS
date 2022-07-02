@@ -27,7 +27,7 @@ if [[ $readonlyfs =~ "enabled" ]]; then
 fi
 
 # Clean Previous installation
-rm -r /home/deck/.local/share/borealisOS
+rm -r /home/deck/.local/share/borealisOS 2> /dev/null
 
 sed -i '/# Added by BorealisOS/d' ~/.bashrc
 

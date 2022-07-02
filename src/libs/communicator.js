@@ -1,4 +1,6 @@
 const logger = new (require('./log'))('Communicator')
+const fetch = require('cross-fetch')
+
 module.exports = class borealisCommunicator {
   async init (injector) {
     this.messageHooks = {}
@@ -44,12 +46,19 @@ module.exports = class borealisCommunicator {
     }
   }
 
+  async exposeFunctions (pageInstance) {
+    await pageInstance.exposeFunction('borealisPush', (event, data) => {
+      return this.recieveData(event, data)
+    })
+
+    await pageInstance.exposeFunction('borealisFetch', fetch)
+  }
+
   async finaliseInit () {
     await this.injector.refreshInstances()
     for (const page in this.injector.instance) {
-      await this.injector.instance[page].exposeFunction('borealisPush', (event, data) => {
-        return this.recieveData(event, data)
-      })
+      await this.exposeFunctions(this.injector.instance[page])
+
       this.injector.instance[page].addScriptTag({ content: 'window.Borealis.setCommunicatorOnline()' })
 
       this.knownInstances.push(page)

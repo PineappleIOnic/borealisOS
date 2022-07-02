@@ -14,7 +14,7 @@ module.exports = class bundler {
       arch: process.arch,
       hotReloading: !!process.argv.includes('--hot-reload'),
       environment: process.env.NODE_ENV || 'development',
-      serviceInstalled: fs.existsSync('/etc/systemd/system/borealisOS.service')
+      serviceInstalled: fs.existsSync('/etc/systemd/system/borealis.service')
     }
 
     this.webpackConf = {

@@ -112,7 +112,7 @@ module.exports = class Spotify extends BorealisPlugin {
       }
 
       const unlinkAccount = () => {
-       this.config.authenticationData = null
+        this.config.authenticationData = null
       }
 
       return (

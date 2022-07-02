@@ -68,28 +68,28 @@ export default (props) => {
         ? <div className='borealis_settings_main'>
           {
             showInitialWarning &&
-            <div
-              style={{
-                textAlign: 'justify',
-                marginTop: '20px',
-                borderRadius: '10px',
-                boxShadow: '41px 41px 82px #06080b, -41px -41px 82px #16202b',
-                padding: '10px',
-                fontSize: '13px',
-                boxSizing: 'border-box'
-              }}
-            >
-              <p>
-                BorealisOS is still currently under heavy development, there will be
-                bugs, breakages and all sorts. BorealisOS does not currently have support for Steam's Controller NavMap
-                system. This means that all Borealis Menus and UI will only work
-                with the touch screen for now.
-              </p>
+              <div
+                style={{
+                  textAlign: 'justify',
+                  marginTop: '20px',
+                  borderRadius: '10px',
+                  boxShadow: '41px 41px 82px #06080b, -41px -41px 82px #16202b',
+                  padding: '10px',
+                  fontSize: '13px',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <p>
+                  BorealisOS is still currently under heavy development, there will be
+                  bugs, breakages and all sorts. BorealisOS does not currently have support for Steam's Controller NavMap
+                  system. This means that all Borealis Menus and UI will only work
+                  with the touch screen for now.
+                </p>
 
-              <button onClick={handleWarningClose} className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>
-                Ok, I understand.
-              </button>
-            </div>
+                <button onClick={handleWarningClose} className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable'>
+                  Ok, I understand.
+                </button>
+              </div>
           }
 
           <div className='DialogControlsSectionHeader'>Plugins</div>
@@ -144,7 +144,7 @@ export default (props) => {
                 <div className='updaterfield_UpdateStatusContainer_8OvE2'>
                   {latestRelease && semver.gte(COMPILE_DATA.version, (latestRelease ? latestRelease.tag_name : '0.0.0'))
                     ? <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={checkUpdate} disabled={checkingForUpdate}>{checkingForUpdate ? 'Checking...' : 'Check For Updates'}</button>
-                    : <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={startUpdate} >Install {latestRelease.tag_name}</button>}
+                    : <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={startUpdate}>Install {latestRelease.tag_name}</button>}
                 </div>
               </div>
             </div>

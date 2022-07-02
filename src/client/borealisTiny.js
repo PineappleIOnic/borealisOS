@@ -5,7 +5,7 @@ if (window.Borealis) {
 }
 
 Borealis = class {
-  constructor() {
+  constructor () {
     console.log('BorealisT Client Initialised!')
 
     this.communicatorOnline = false
@@ -15,7 +15,7 @@ Borealis = class {
     }
   }
 
-  async setCommunicatorOnline() {
+  async setCommunicatorOnline () {
     this.communicatorOnline = true
 
     const theme = await window.borealisPush('currentTheme')
@@ -27,7 +27,7 @@ Borealis = class {
     }
   }
 
-  setTheme(style) {
+  setTheme (style) {
     // Check if we already have a theme enabled.
     if (document.getElementById('borealis_theme')) {
       document.getElementById('borealis_theme').innerHTML = style
@@ -39,13 +39,13 @@ Borealis = class {
     }
   }
 
-  removeTheme() {
+  removeTheme () {
     if (document.getElementById('borealis_theme')) {
       document.getElementById('borealis_theme').remove()
     }
   }
 
-  uninject() {
+  uninject () {
     this.removeTheme()
   }
 }

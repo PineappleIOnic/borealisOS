@@ -1,4 +1,4 @@
-const axios = require('axios').default
+const fetch = require('cross-fetch')
 
 module.exports = class UpdateHandler {
   constructor (injector, communicator) {
@@ -10,10 +10,9 @@ module.exports = class UpdateHandler {
 
   async getLatestRelease () {
     return new Promise((resolve, reject) => {
-      axios.get('https://api.github.com/repos/PineappleIOnic/borealisOS/releases/latest')
-        .then(response => {
-          resolve(response.data)
-        })
+      fetch('https://api.github.com/repos/PineappleIOnic/borealisOS/releases/latest')
+        .then((data) => data.json())
+        .then(data => resolve(data))
         .catch(err => {
           reject(err)
         })

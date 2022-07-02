@@ -9,14 +9,14 @@ module.exports = class logger {
   }
 
   info (message) {
-    console.log(`${this.name} [${chalk.blue('INFO')}] ${message}`)
+    console.log(`[${chalk.blue('INFO')}] ${this.name} ${message}`)
   }
 
   warning (message) {
-    console.log(`${this.name} [${chalk.yellow('WARN')}] ${message}`)
+    console.log(`[${chalk.yellow('WARN')}] ${this.name} ${message}`)
   }
 
   error (message) {
-    console.log(`${this.name} [${chalk.red('ERROR')}] ${message}`)
+    console.log(`[${chalk.red('ERROR')}] ${this.name} ${message}`)
   }
 }

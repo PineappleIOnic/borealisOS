@@ -14,7 +14,7 @@ if [[ $readonlyfs =~ "enabled" ]]; then
     steamos-readonly disable
 fi
 
-rm -r ~/.local/share/borealisOS/
+rm -r /home/deck/.local/share/borealisOS
 
 sed -i '/# Added by BorealisOS/d' ~/.bashrc
 
