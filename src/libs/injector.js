@@ -213,6 +213,29 @@ module.exports = class borealisInjector {
   }
 }
 
+module.exports.detectSteamInstall = function () {
+  const locations = [
+    'C:/Program Files (x86)/Steam/',
+    '/home/deck/.steam/steam'
+  ]
+
+  let detectedLocation = false
+
+  // Check all locations
+  locations.forEach(element => {
+    try {
+      fs.accessSync(element)
+      fs.accessSync(resolve(element, 'steamui/sp.js'))
+      fs.accessSync(resolve(element, 'steamui/libraryroot~sp.js'))
+      detectedLocation = element
+    } catch (err) {
+
+    }
+  })
+
+  return detectedLocation
+}
+
 // Check if steam is running
 const isSteamRunning = async () => {
   switch (process.platform) {

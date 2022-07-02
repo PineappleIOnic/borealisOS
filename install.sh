@@ -56,6 +56,10 @@ cd /home/deck/.local/share/borealisOS
 mkdir -p ~/bin
 touch ~/bin/borealisOS
 
+# Because script runs as root, the deck user will not be allowed to access configuration files.
+# This fixes those permissions.
+chown -R deck:deck /home/deck/.local/share/borealisOS
+
 # Install Service Files
 cp -r /home/deck/.local/share/borealisOS/borealis.service /etc/systemd/system/
 
