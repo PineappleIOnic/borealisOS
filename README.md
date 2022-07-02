@@ -38,7 +38,7 @@ __BorealisOS requires CEF Debugging to be enabled within the Developer settings_
 If you still want to install BorealisOS, you can do so by running the following command:
 
 ```sh
-curl -L https://github.com/PineappleIOnic/BorealisOS/raw/main/install.sh | sh
+curl -L https://github.com/PineappleIOnic/BorealisOS/raw/main/install.sh | sudo sh
 ```
 
 Once BorealisOS is installed it can be run by __SSHing into the device while gaming mode is running__ and running the `borealisOS` command.

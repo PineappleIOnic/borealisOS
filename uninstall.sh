@@ -9,7 +9,7 @@ echo "Uninstalling BorealisOS..."
 
 readonlyfs="$(steamos-readonly status)" 
 
-if [[ ! $readonlyfs =~ "enabled" ]]; then
+if [[ $readonlyfs =~ "enabled" ]]; then
     echo "Note: Uninstaller will temporarily disable readonly on the SteamOS file system to remove the borealisOS service."
     steamos-readonly disable
 fi
@@ -24,6 +24,6 @@ rm -f /etc/systemd/system/borealis.service
 
 rm ~/bin/borealisOS
 
-if [[ ! $readonlyfs =~ "enabled" ]]; then
+if [[ $readonlyfs =~ "enabled" ]]; then
     steamos-readonly enable
 fi

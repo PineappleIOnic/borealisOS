@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=root
+User=deck
 WorkingDirectory=/home/deck/.local/share/borealisOS
 ExecStart=/home/deck/.local/share/borealisOS/node/bin/node src/index.js
 Restart=on-failure

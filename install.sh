@@ -27,39 +27,39 @@ if [[ $readonlyfs =~ "enabled" ]]; then
 fi
 
 # Clean Previous installation
-rm -r ~/.local/share/borealisOS/
+rm -r /home/deck/.local/share/borealisOS
 
 sed -i '/# Added by BorealisOS/d' ~/.bashrc
 
-mkdir -p ~/.local/share/borealisOS
+mkdir -p /home/deck/.local/share/borealisOS
 
 systemctl stop borealis 2> /dev/null
 systemctl disable borealis 2> /dev/null
 rm -f /etc/systemd/system/borealis.service
 
 # Clone BorealisOS
-curl -L https://github.com/PineappleIOnic/BorealisOS/tarball/main | tar -xz -C ~/.local/share/borealisOS/ --strip-components=1
+curl -L https://github.com/PineappleIOnic/BorealisOS/tarball/main | tar -xz -C /home/deck/.local/share/borealisOS --strip-components=1
 
 # Install NodeJS
-curl -L https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-x64.tar.xz --output ~/.local/share/borealisOS/node-v16.14.2-linux-x64.tar.xz
+curl -L https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-x64.tar.xz --output /home/deck/.local/share/borealisOS/node-v16.14.2-linux-x64.tar.xz
 
-mkdir ~/.local/share/borealisOS/node
-tar -xf ~/.local/share/borealisOS/node-v16.14.2-linux-x64.tar.xz -C ~/.local/share/borealisOS/node --strip-components=1
+mkdir /home/deck/.local/share/borealisOS/node
+tar -xf /home/deck/.local/share/borealisOS/node-v16.14.2-linux-x64.tar.xz -C /home/deck/.local/share/borealisOS/node --strip-components=1
 
-rm ~/.local/share/borealisOS/node-v16.14.2-linux-x64.tar.xz
+rm /home/deck/.local/share/borealisOS/node-v16.14.2-linux-x64.tar.xz
 
 # Install Dependencies
-cd ~/.local/share/borealisOS
-~/.local/share/borealisOS/node/bin/npm install
+cd /home/deck/.local/share/borealisOS
+/home/deck/.local/share/borealisOS/node/bin/npm install
 
 # Add borealisOS to terminal
 mkdir -p ~/bin
 touch ~/bin/borealisOS
 
 # Install Service Files
-cp -r ~/.local/share/borealisOS/borealis.service /etc/systemd/system/
+cp -r /home/deck/.local/share/borealisOS/borealis.service /etc/systemd/system/
 
-echo "cd ~/.local/share/borealisOS/ && ~/.local/share/borealisOS/node/bin/node src/index.js" > ~/bin/borealisOS
+echo "cd /home/deck/.local/share/borealisOS && /home/deck/.local/share/borealisOS/node/bin/node src/index.js" > ~/bin/borealisOS
 chmod +x ~/bin/borealisOS
 
 sudo systemctl enable borealis
