@@ -42,13 +42,13 @@ module.exports = class Spotify extends BorealisPluginServer {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: requestParams
-        }).then(data => data.json())
+        }).then(data => {if (data.ok) {return data.json()} else {throw new Error(data.json().error.message)}})
 
         const profileResponse = await fetch('https://api.spotify.com/v1/me', {
           headers: {
             Authorization: `Bearer ${tokenResponse.access_token}`
           }
-        }).then(data => data.json())
+        }).then(data => {if (data.ok) {return data.json()} else {throw new Error(data.json().error.message)}})
 
         logger.info('Successfully authenticated with Spotify!')
 
