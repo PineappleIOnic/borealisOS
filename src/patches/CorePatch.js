@@ -25,8 +25,9 @@ module.exports = class CorePatch extends BorealisPatch {
     if (fileData.includes('BOREALIS MODIFIED')) {
       logger.warning(`Borealis Failed to rollback changes to ${file} on the last launch, attempting to restore backup...`)
 
-      if (fs.existsSync(path.resolve(steamInstall, 'backups/', file))) {
-        fs.copyFileSync(path.resolve(steamInstall, 'backups/', file), file)
+      const fileName = path.basename(file)
+      if (fs.existsSync(path.resolve(steamInstall, 'borealis/backups', fileName))) {
+        fs.copyFileSync(path.resolve(steamInstall, './borealis/backups', fileName), file)
         logger.info(`Borealis Successfully restored backup of ${file}`)
       } else {
         logger.error(`Borealis Failed to restore backup of ${file}, Refusing to patch. Please restart your steam client and try again.`)

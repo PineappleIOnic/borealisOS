@@ -157,6 +157,10 @@ module.exports = class Spotify extends BorealisPlugin {
       const [duration_interval, setDurationInteval] = React.useState(null)
 
       React.useEffect(() => {
+        if (!this.player) {
+          return
+        }
+
         this.player.addListener('player_state_changed', state => {
           if (!state) {
             return

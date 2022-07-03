@@ -47,17 +47,26 @@ module.exports = class borealisCommunicator {
   }
 
   async exposeFunctions (pageInstance) {
-    await pageInstance.exposeFunction('borealisPush', (event, data) => {
-      return this.recieveData(event, data)
-    })
+    // Check if binding already exists, (This is a little hacky. as it's not actually apart of the pupeteer API)
+    if (!pageInstance._pageBindings.has('borealisPush')) {
+      await pageInstance.exposeFunction('borealisPush', (event, data) => {
+        return this.recieveData(event, data)
+      })
+    }
 
-    await pageInstance.exposeFunction('borealisFetch', fetch)
+    if (!pageInstance._pageBindings.has('borealisFetch')) {
+      await pageInstance.exposeFunction('borealisFetch', fetch)
+    }
   }
 
   async finaliseInit () {
     await this.injector.refreshInstances()
     for (const page in this.injector.instance) {
       await this.exposeFunctions(this.injector.instance[page])
+
+      if (!this.injector.instance[page]) {
+        return
+      }
 
       this.injector.instance[page].addScriptTag({ content: 'window.Borealis.setCommunicatorOnline()' })
 

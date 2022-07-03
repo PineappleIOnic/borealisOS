@@ -17,7 +17,9 @@ global.keystore = new (require('./libs/keystore.js'))()
 function generateUILib (injector) {
   const BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
 
-  const currentSpData = fs.readFileSync(path.resolve(injector.detectSteamInstall(), 'steamui/sp.js'))
+  const steamInstall = injector.detectSteamInstall()
+
+  const currentSpData = fs.readFileSync(path.resolve(steamInstall, 'steamui/sp.js'))
   const oldSpHash = global.keystore.readKey('spHash') || ''
 
   let currentSpHash = crypto.createHash('sha256')
@@ -26,6 +28,11 @@ function generateUILib (injector) {
   if (oldSpHash !== currentSpHash && currentSpData.includes('BOREALIS') == false) {
     logger.info('Detected new version of steam. Updating UI Libs.')
     logger.info('New Steam sp.js hash: ' + currentSpHash)
+
+    // Remove old backups
+    if (fs.existsSync(resolve(steamInstall, './borealis/backups'))) {
+      fs.rmSync(resolve(steamInstall, './borealis/backups'), { recursive: true })
+    }
 
     const borealisUI = new BorealisUI()
 

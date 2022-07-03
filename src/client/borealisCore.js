@@ -55,8 +55,10 @@ const Borealis = class {
 
     const theme = await window.borealisPush('currentTheme')
 
-    if (theme.name !== 'Default (SteamOS Holo)') {
-      this.setTheme(theme.content)
+    if (theme) {
+      if (theme.name !== 'Default (SteamOS Holo)') {
+        this.setTheme(theme.content)
+      }
     }
 
     window.borealisPush('loadPlugins')

@@ -47,7 +47,7 @@ module.exports = class QuickAccessPatch extends BorealisPatch {
       console.log('Failed to detect and patch Quick Access functions! Please File a bug report if this keeps occouring!')
     }
 
-    const hookFunc = `window.__BOREALIS__.quickAccessHook(${result.declarations[1].id.name});`
+    const hookFunc = `if (window.__BOREALIS__) {window.__BOREALIS__.quickAccessHook(${result.declarations[1].id.name})}`
 
     fileData = fileData.slice(0, result.end) +
     hookFunc +

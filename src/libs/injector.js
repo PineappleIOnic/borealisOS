@@ -1,10 +1,10 @@
 const puppeteer = require('puppeteer-core')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
-const fetch = require('node-fetch')
+const fetch = require('cross-fetch')
 const logger = new (require('./log'))('Injector')
 const fs = require('fs')
-const { resolve } = require('path')
+const { resolve, basename } = require('path')
 
 module.exports = class borealisInjector {
   constructor () {
@@ -117,12 +117,10 @@ module.exports = class borealisInjector {
     // Step 1, Patch all client files that need patching.
     const steamInstall = this.detectSteamInstall()
 
-    if (fs.existsSync(resolve(steamInstall, './backups'))) {
-      fs.rmSync(resolve(steamInstall, './backups'), { recursive: true })
+    if (!fs.existsSync(resolve(steamInstall, './borealis'))) {
+      fs.mkdirSync(resolve(steamInstall, './borealis'))
+      fs.mkdirSync(resolve(steamInstall, './borealis/backups'))
     }
-
-    fs.mkdirSync(resolve(steamInstall, './backups'))
-    fs.mkdirSync(resolve(steamInstall, './backups/steamui'))
 
     this.loadPatchFiles()
 
@@ -139,7 +137,7 @@ module.exports = class borealisInjector {
 
       if (!contents.includes('BOREALIS MODIFIED')) {
         // Write backup file
-        fs.writeFileSync(resolve(steamInstall + '/backups', file), contents)
+        fs.writeFileSync(resolve(steamInstall + '/borealis/backups', basename(file)), contents)
       }
 
       logger.info('Patching File: ' + file)

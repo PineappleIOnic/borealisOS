@@ -59,7 +59,7 @@ module.exports = class Spotify extends BorealisPluginServer {
         })
       } catch (err) {
         logger.error(`Failed to authenticate with Spotify!, Err: ${err}`)
-        res.send('Authentication Failed. Did you remember to set your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables? Check your borealisOS logs for more info.')
+        throw new Error('Authentication Failed. Did you remember to set your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables? Check your borealisOS logs for more info.')
       }
     })
 
