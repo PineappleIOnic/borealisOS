@@ -119,6 +119,9 @@ module.exports = class borealisInjector {
 
     if (!fs.existsSync(resolve(steamInstall, './borealis'))) {
       fs.mkdirSync(resolve(steamInstall, './borealis'))
+    }
+
+    if (!fs.existsSync(resolve(steamInstall, './borealis/backups'))) {
       fs.mkdirSync(resolve(steamInstall, './borealis/backups'))
     }
 

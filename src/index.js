@@ -1,7 +1,7 @@
 const borealisCommunicator = require('./libs/communicator')
 const borealisInjector = require('./libs/injector')
 const logger = new (require('./libs/log'))('Core')
-const path = require('path')
+const { resolve } = require('path')
 const fs = require('fs')
 const crypto = require('crypto')
 const BorealisUI = require('./libs/borealisUI')
@@ -15,17 +15,17 @@ require('dotenv').config()
 global.keystore = new (require('./libs/keystore.js'))()
 
 function generateUILib (injector) {
-  const BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
+  const BorealisAppdata = resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
 
   const steamInstall = injector.detectSteamInstall()
 
-  const currentSpData = fs.readFileSync(path.resolve(steamInstall, 'steamui/sp.js'))
+  const currentSpData = fs.readFileSync(resolve(steamInstall, 'steamui/sp.js'))
   const oldSpHash = global.keystore.readKey('spHash') || ''
 
   let currentSpHash = crypto.createHash('sha256')
   currentSpHash = (currentSpHash.update(currentSpData)).digest('hex')
 
-  if (oldSpHash !== currentSpHash && currentSpData.includes('BOREALIS') == false) {
+  if ((oldSpHash == false || "")  || (oldSpHash !== currentSpHash && currentSpData.includes('BOREALIS') == false)) {
     logger.info('Detected new version of steam. Updating UI Libs.')
     logger.info('New Steam sp.js hash: ' + currentSpHash)
 
@@ -38,14 +38,14 @@ function generateUILib (injector) {
 
     const borealisUIScripts = borealisUI.decode({
       sp: currentSpData.toString(),
-      libraryRoot: fs.readFileSync(path.resolve(injector.detectSteamInstall(), 'steamui/libraryroot~sp.js')),
-      login: fs.readFileSync(path.resolve(injector.detectSteamInstall(), 'steamui/login.js'))
+      libraryRoot: fs.readFileSync(resolve(injector.detectSteamInstall(), 'steamui/libraryroot~sp.js')),
+      login: fs.readFileSync(resolve(injector.detectSteamInstall(), 'steamui/login.js'))
     })
 
     global.keystore.writeKey('spHash', currentSpHash)
 
-    fs.writeFileSync(path.resolve(BorealisAppdata, 'borealisUI_Client.js'), borealisUIScripts.clientScript)
-    fs.writeFileSync(path.resolve(BorealisAppdata, 'borealisUI_Server.js'), borealisUIScripts.serverScript)
+    fs.writeFileSync(resolve(BorealisAppdata, 'borealisUI_Client.js'), borealisUIScripts.clientScript)
+    fs.writeFileSync(resolve(BorealisAppdata, 'borealisUI_Server.js'), borealisUIScripts.serverScript)
   }
 }
 
@@ -53,15 +53,15 @@ async function init () {
   const injector = new borealisInjector()
 
   // Quick check to ensure CEF Debugging is enabled.
-  if (!fs.existsSync(path.resolve(injector.detectSteamInstall(), '.cef-enable-remote-debugging'))) {
-    fs.writeFileSync(path.resolve(injector.detectSteamInstall(), '.cef-enable-remote-debugging'), '')
+  if (!fs.existsSync(resolve(injector.detectSteamInstall(), '.cef-enable-remote-debugging'))) {
+    fs.writeFileSync(resolve(injector.detectSteamInstall(), '.cef-enable-remote-debugging'), '')
     logger.error('CEF Debugging is not enabled. BorealisOS has enabled it for you. Please restart Steam and try again.')
     process.exit(1)
   }
 
   generateUILib(injector)
 
-  const BorealisAppdata = path.resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
+  const BorealisAppdata = resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
 
   logger.info('Initialising Borealis Injector')
   await injector.inject(BorealisAppdata)
