@@ -23,6 +23,7 @@ module.exports = class Spotify extends BorealisPlugin {
       case 'spotify_auth_success':
         // Called when the user has successfully authenticated with Spotify
         this.login(data)
+        history.back();
     }
   }
 
@@ -104,8 +105,6 @@ module.exports = class Spotify extends BorealisPlugin {
         scope: 'streaming user-read-email user-read-private',
         show_dialog: true
       })
-
-      // const [authenticated, setAuthenticated] = React.useState(false);
 
       const startAuth = () => {
         window.location.replace(authURL)

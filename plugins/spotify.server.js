@@ -94,7 +94,7 @@ module.exports = class Spotify extends BorealisPluginServer {
           ...tokenResponse,
           ...profileResponse
         })
-        res.send('Authentication Successful, you can now close this page.')
+        res.send('Authentication Successful, you should get automatically redirected back to the settings menu in a moment.')
       } catch (err) {
         logger.error(`Failed to authenticate with Spotify!, Err: ${err}`)
         res.send('Authentication Failed. Did you remember to set your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables? Check your borealisOS logs for more info.')
