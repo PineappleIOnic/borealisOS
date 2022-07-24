@@ -25,10 +25,14 @@
     "babel-loader": "^8.2.5",
     "chalk": "^4.1.2",
     "chokidar": "^3.5.3",
+    "css-loader": "^6.7.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "puppeteer-core": "^13.5.2",
+    "sass": "^1.54.0",
+    "sass-loader": "^13.0.2",
     "semver": "^7.3.7",
+    "style-loader": "^3.3.1",
     "webpack": "^5.72.1"
   }
 }

@@ -4,6 +4,7 @@ Borealis Client, Clientside SteamOS customisation framework.
 import settingsPage from './pages/settingsPage.jsx'
 import lambdaLogo from './assets/lambdaLogo.jsx'
 import quickAccess from './pages/quickAccess.jsx'
+import NotificationService from './notificationService.js'
 
 if (window.Borealis) {
   window.Borealis.uninject()
@@ -18,6 +19,7 @@ const Borealis = class {
     window.__BOREALIS__.COMMUNICATE = this.handleCommunication.bind(this)
     window.__BOREALIS__.quickAccessHook = this.quickAccessHook.bind(this)
     window.__BOREALIS__.uninject = this.uninject.bind(this)
+    window.__BOREALIS__.notificationService = new NotificationService()
 
     this.hooks = {}
     this.serverData = {}
@@ -46,6 +48,10 @@ const Borealis = class {
     if (window.borealisPush) {
       this.setCommunicatorOnline()
     }
+
+    new Promise(resolve => setTimeout(resolve, 2000)).then(
+      () => { window.__BOREALIS__.notificationService.createNotification('BorealisOS', 'BorealisOS has successfully initialised!', null, 5000) }
+    )
   }
 
   async setCommunicatorOnline () {
@@ -84,10 +90,14 @@ const Borealis = class {
 
   handleCommunication (event, data) {
     console.log('Recieved Event: ' + event)
+    console.log(data)
 
     switch (event) {
       case 'plugin': {
         this.handlePlugin(data)
+      }
+      case 'configRefresh': {
+        this.handleConfigRefresh(data)
       }
     }
 
@@ -95,6 +105,29 @@ const Borealis = class {
     this.plugins.forEach(plugin => {
       if (event.toLowerCase().startsWith(plugin.pluginInfo.name.toLowerCase())) {
         plugin.handleCommunication(event, data)
+      }
+    })
+  }
+
+  handleConfigRefresh (data) {
+    console.log(data.result)
+    this.plugins.forEach(plugin => {
+      if (plugin.pluginInfo.name === data.name) {
+        plugin.config = new Proxy(data.result || {}, {
+          set: function (target, key, value) {
+            target[key] = value
+
+            // Send Data to backend
+            const data = {
+              name: plugin.pluginInfo.name,
+              result: target,
+              key: key,
+              value: value
+            }
+            window.borealisPush('pluginConfigSet', data)
+            return true
+          }
+        })
       }
     })
   }
@@ -111,6 +144,11 @@ const Borealis = class {
 
       const plugin = new module.exports()
 
+      if (this.plugins.find(currentPlugin => currentPlugin.pluginInfo.name === plugin.pluginInfo.name)) {
+        console.log('Plugin "' + plugin.pluginInfo.name + '" already loaded. Refusing to load again.')
+        return
+      }
+
       // Get config
       window.borealisPush('pluginConfigGet', plugin.pluginInfo.name).then(data => {
         plugin.config = new Proxy(data || {}, {
@@ -120,6 +158,7 @@ const Borealis = class {
             // Send Data to backend
             const data = {
               name: plugin.pluginInfo.name,
+              result: target,
               key: key,
               value: value
             }

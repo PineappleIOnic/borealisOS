@@ -4,7 +4,7 @@ const logger = new (require('./log'))('Theme Engine')
 
 module.exports = class ThemeEngine {
   constructor (injectorInstance, communicator) {
-    this.keystore = global.keystore
+    this.keystore = global.borealisData
 
     // Read all themes
     try {

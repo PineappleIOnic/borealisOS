@@ -23,7 +23,7 @@ module.exports = class Spotify extends BorealisPlugin {
       case 'spotify_auth_success':
         // Called when the user has successfully authenticated with Spotify
         this.login(data)
-        history.back();
+        history.back()
     }
   }
 
@@ -186,6 +186,10 @@ module.exports = class Spotify extends BorealisPlugin {
 
       React.useEffect(() => {
         setDurationInteval(setInterval(() => {
+          if (!this.player) {
+            return
+          }
+
           this.player.getCurrentState().then(state => {
             if (!state) { return }
             setTimeElapsed((state.position / state.duration) * 100)

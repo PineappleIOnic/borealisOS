@@ -12,20 +12,23 @@ module.exports = class Spotify extends BorealisPluginServer {
       version: '1.0.0',
       dependencies: ['borealis-core']
     }
-
-    this.config = {
-      spotify_client_id: process.env.SPOTIFY_CLIENT_ID,
-      spotify_client_secret: process.env.SPOTIFY_CLIENT_SECRET
-    }
-
     this.communicator = communicator
   }
 
   async main () {
     // This is a main initialization thread for your plugin. You can do anything here.
     const express = require('express')
+    this.config.spotify_client_id = process.env.SPOTIFY_CLIENT_ID
+    this.config.spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET
 
     const app = express()
+
+    // setInterval(() => {
+    //   let randomStr = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    //   console.log('Reloading Config Data.... ' + randomStr)
+    //   this.config['randomStr'] = randomStr
+    // }
+    // , 1000 * 10)
 
     this.communicator.registerEventHook('spotifyRefreshToken', async (data) => {
       logger.info('Refreshing Spotify token...')
@@ -42,13 +45,13 @@ module.exports = class Spotify extends BorealisPluginServer {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: requestParams
-        }).then(data => {if (data.ok) {return data.json()} else {throw new Error(data.json().error.message)}})
+        }).then(data => { if (data.ok) { return data.json() } else { throw new Error(data.json().error.message) } })
 
         const profileResponse = await fetch('https://api.spotify.com/v1/me', {
           headers: {
             Authorization: `Bearer ${tokenResponse.access_token}`
           }
-        }).then(data => {if (data.ok) {return data.json()} else {throw new Error(data.json().error.message)}})
+        }).then(data => { if (data.ok) { return data.json() } else { throw new Error(data.json().error.message) } })
 
         logger.info('Successfully authenticated with Spotify!')
 

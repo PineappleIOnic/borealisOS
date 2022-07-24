@@ -2,9 +2,13 @@ const fs = require('fs')
 const { resolve } = require('path')
 const logger = new (require('./log'))('Plugin Engine')
 const babel = require('@babel/core')
+const Keystore = require('./keystore')
 
 module.exports = class PluginEngine {
   constructor (injectorInstance, communicator) {
+    this.pluginKeystore = new Keystore('pluginData')
+    this.communicator = communicator
+
     communicator.registerEventHook('loadPlugins', () => {
       logger.info('Transpiling ClientSide Plugins...')
 
@@ -37,11 +41,11 @@ module.exports = class PluginEngine {
     })
 
     communicator.registerEventHook('pluginConfigSet', (data) => {
-      global.keystore.writeKey(`plugin_${data.name}`, { [data.key]: data.value })
+      this.pluginKeystore.writeKey(`plugin_${data.name}`, { [data.key]: data.value })
     })
 
     communicator.registerEventHook('pluginConfigGet', (name) => {
-      return global.keystore.readKey(`plugin_${name}`)
+      return this.pluginKeystore.readKey(`plugin_${name}`)
     })
 
     this.plugins = []
@@ -53,14 +57,70 @@ module.exports = class PluginEngine {
         return
       }
       try {
-        const Plugin = new (require(resolve('./plugins', file)))(communicator)
+        const plugin = new (require(resolve('./plugins', file)))(communicator)
 
-        if (Plugin.main) {
-          Plugin.main()
+        const pluginEngine = this
+
+        plugin.config = new Proxy(this.pluginKeystore.readKey(`plugin_${plugin.name}`) || {}, {
+          set: function (target, key, value) {
+            target[key] = value
+
+            // Send Data to backend
+            const data = {
+              name: plugin.pluginInfo.name,
+              result: target,
+              key: key,
+              value: value
+            }
+            console.log(data)
+
+            pluginEngine.syncConfig(data, true)
+
+            console.log('Config object got updated.')
+            return true
+          }
+        })
+
+        if (plugin.main) {
+          plugin.main()
         }
       } catch (e) {
         logger.error(`Failed to load ${file}: ${e}`)
       }
     })
+  }
+
+  // Helper function to sync configuration between a plugin that has both serverside and clientside plugins.
+  // They **MUST** have the same plugin name.
+  syncConfig (data, calledByServer) {
+    this.pluginKeystore.writeKey(`plugin_${data.name}`, { [data.key]: data.value })
+
+    if (calledByServer) {
+      // Send to clientside
+      this.communicator.send('configRefresh', data)
+    } else {
+      this.plugins.forEach(plugin => {
+        if (plugin.pluginInfo.name === pluginName) {
+          plugin.config = new Proxy(data.target || {}, {
+            set: function (target, key, value) {
+              target[key] = value
+
+              // Send Data to backend
+              const data = {
+                name: plugin.pluginInfo.name,
+                result: target,
+                key: key,
+                value: value
+              }
+              pluginEngine.syncConfig(data, true)
+
+              console.log('Config object got updated.')
+              return true
+            }
+          })
+        }
+      }
+      )
+    }
   }
 }

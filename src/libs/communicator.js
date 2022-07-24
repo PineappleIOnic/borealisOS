@@ -16,9 +16,7 @@ module.exports = class borealisCommunicator {
     this.injector.refreshInstances().then(() => {
       for (const page in this.injector.instance) {
         if (!this.knownInstances.includes(page)) {
-          this.injector.instance[page].exposeFunction('borealisPush', (event, data) => {
-            return this.recieveData(event, data)
-          })
+          this.exposeFunctions(this.injector.instance[page])
           this.injector.instance[page].addScriptTag({ content: 'window.Borealis.setCommunicatorOnline()' })
 
           this.knownInstances.push(page)

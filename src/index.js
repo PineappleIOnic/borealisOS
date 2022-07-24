@@ -12,7 +12,7 @@ const UpdateHandler = require('./libs/updateHandler')
 const chokidar = require('chokidar')
 require('dotenv').config()
 
-global.keystore = new (require('./libs/keystore.js'))()
+global.borealisData = new (require('./libs/keystore.js'))()
 
 function generateUILib (injector) {
   const BorealisAppdata = resolve(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share'), 'borealisOS')
@@ -42,7 +42,7 @@ function generateUILib (injector) {
       login: fs.readFileSync(resolve(injector.detectSteamInstall(), 'steamui/login.js'))
     })
 
-    global.keystore.writeKey('spHash', currentSpHash)
+    global.borealisData.writeKey('spHash', currentSpHash)
 
     fs.writeFileSync(resolve(BorealisAppdata, 'borealisUI_Client.js'), borealisUIScripts.clientScript)
     fs.writeFileSync(resolve(BorealisAppdata, 'borealisUI_Server.js'), borealisUIScripts.serverScript)
