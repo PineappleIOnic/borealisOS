@@ -4,8 +4,6 @@
 <h1 align="center">BorealisOS</h1>
 <p align="center">A SteamOS 3.0 plugin and customisation framework built using NodeJS.</p>
 
-<p align="center">Note: Very early progress, only use if you know what you are doing.</p>
-
 <br>
 <br>
 
