@@ -30,11 +30,12 @@ export default class BorealisPlugin {
         const data = {
           name: this.pluginInfo.name,
           key: key,
-          value: value
+          value: value,
+          result: target
         }
         window.borealisPush('pluginConfigSet', data)
 
-        console.log(`Config object got updated. Result: ${target}`)
+        console.log(`Config object got updated: ${JSON.stringify(data)}`)
         return true
       }.bind(this)
     })

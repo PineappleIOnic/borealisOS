@@ -41,7 +41,7 @@ module.exports = class PluginEngine {
     })
 
     communicator.registerEventHook('pluginConfigSet', (data) => {
-      this.pluginKeystore.writeKey(`plugin_${data.name}`, { [data.key]: data.value })
+      this.syncConfig(data, false);
     })
 
     communicator.registerEventHook('pluginConfigGet', (name) => {

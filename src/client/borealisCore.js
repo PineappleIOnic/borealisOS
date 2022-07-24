@@ -110,7 +110,6 @@ const Borealis = class {
   }
 
   handleConfigRefresh (data) {
-    console.log(data.result)
     this.plugins.forEach(plugin => {
       if (plugin.pluginInfo.name === data.name) {
         plugin.config = new Proxy(data.result || {}, {
@@ -164,7 +163,7 @@ const Borealis = class {
             }
             window.borealisPush('pluginConfigSet', data)
 
-            console.log(`Config object got updated. Result: ${target}`)
+            console.log(`Config object got updated. Result: ${JSON.stringify(target)}`)
             return true
           }
         })
