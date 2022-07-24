@@ -36,6 +36,10 @@ export default (props) => {
     })
   }
 
+  const handlePluginSettings = (plugin) => {
+    setCurrentPluginSettings(plugin)
+  }
+
   const handleWarningClose = () => {
     setShowInitialWarning(false)
     localStorage.setItem('borealisOS_initialWarning', 'true')
@@ -64,7 +68,7 @@ export default (props) => {
       </div>
 
       {currentPluginSettings === false
-        ? <div className='borealis_settings_main'>
+        && <div className='borealis_settings_main'>
           {
             showInitialWarning &&
               <div
@@ -103,7 +107,7 @@ export default (props) => {
 
                   {plugin.UI.settingsPage && (
                     <div className='gamepaddialog_FieldChildren_14_HB'>
-                      <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => { console.log(key); setCurrentPluginSettings(key) }}>Plugin Options</button>
+                      <button type='button' className='DialogButton _DialogLayout Secondary gamepaddialog_Button_1kn70 Focusable' onClick={() => { console.log(key); handlePluginSettings(key) }}>Plugin Options</button>
                     </div>
                   )}
                 </div>
@@ -204,10 +208,24 @@ export default (props) => {
             </div>
           </div>
         </div>
-        : <div className='borealis_settings_plugin'>
-          {window.Borealis.plugins[currentPluginSettings].UI.settingsPage()}
-          <button onClick={() => setCurrentPluginSettings(false)} className='DialogButton'>Go Back</button>
-        </div>}
+      }
+
+      <div className='borealis_settings_plugin'>
+        {Object.keys(window.Borealis.plugins).map(key => {
+          const plugin = window.Borealis.plugins[key];
+          if (!plugin) {
+            return
+          }
+
+          if (currentPluginSettings === key) {
+            const Component = window.Borealis.plugins[key].UI.settingsPage
+            return <div>
+              <Component />
+              <button onClick={() => setCurrentPluginSettings(false)} className='DialogButton'>Go Back</button>
+            </div>
+          }
+        })}
+      </div>
     </div>
   )
 }

@@ -96,6 +96,8 @@ module.exports = class Spotify extends BorealisPlugin {
     this.UI.settingsPage = (props) => {
       const React = window.SP_REACT
 
+      const [, forceUpdate] = React.useReducer(x => x + 1, 0)
+
       const authURL = new URL('https://accounts.spotify.com/authorize?')
 
       authURL.search = new URLSearchParams({
@@ -112,10 +114,10 @@ module.exports = class Spotify extends BorealisPlugin {
 
       const unlinkAccount = () => {
         this.config.authenticationData = null
+        forceUpdate()
       }
 
-      return (
-        <div className='spotifySettingsPage'>
+      return <div className='spotifySettingsPage'>
           {!this.config.authenticationData && <button onClick={startAuth} className='DialogButton' style={{ padding: '5px', borderRadius: '10px', marginBottom: '15px', background: '#1DB954', boxSizing: 'border-box' }}>Connect to Spotify</button>}
           {this.config.authenticationData &&
             <div className='spotifySettingsPageProfile'>
@@ -129,7 +131,6 @@ module.exports = class Spotify extends BorealisPlugin {
               <button style={{ marginTop: '20px' }} onClick={unlinkAccount} class='DialogButton'>Unlink Account</button>
             </div>}
         </div>
-      )
     }
 
     const track = {
