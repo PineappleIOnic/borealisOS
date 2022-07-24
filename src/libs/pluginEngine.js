@@ -61,7 +61,7 @@ module.exports = class PluginEngine {
 
         const pluginEngine = this
 
-        plugin.config = new Proxy(this.pluginKeystore.readKey(`plugin_${plugin.name}`) || {}, {
+        plugin.config = new Proxy(this.pluginKeystore.readKey(`plugin_${plugin.pluginInfo.name}`) || {}, {
           set: function (target, key, value) {
             target[key] = value
 
@@ -72,11 +72,8 @@ module.exports = class PluginEngine {
               key: key,
               value: value
             }
-            console.log(data)
 
             pluginEngine.syncConfig(data, true)
-
-            console.log('Config object got updated.')
             return true
           }
         })
@@ -93,7 +90,7 @@ module.exports = class PluginEngine {
   // Helper function to sync configuration between a plugin that has both serverside and clientside plugins.
   // They **MUST** have the same plugin name.
   syncConfig (data, calledByServer) {
-    this.pluginKeystore.writeKey(`plugin_${data.name}`, { [data.key]: data.value })
+    this.pluginKeystore.writeKey(`plugin_${data.name}`, data.result)
 
     if (calledByServer) {
       // Send to clientside
@@ -113,8 +110,6 @@ module.exports = class PluginEngine {
                 value: value
               }
               pluginEngine.syncConfig(data, true)
-
-              console.log('Config object got updated.')
               return true
             }
           })

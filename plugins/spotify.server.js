@@ -23,13 +23,6 @@ module.exports = class Spotify extends BorealisPluginServer {
 
     const app = express()
 
-    // setInterval(() => {
-    //   let randomStr = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    //   console.log('Reloading Config Data.... ' + randomStr)
-    //   this.config['randomStr'] = randomStr
-    // }
-    // , 1000 * 10)
-
     this.communicator.registerEventHook('spotifyRefreshToken', async (data) => {
       logger.info('Refreshing Spotify token...')
 
