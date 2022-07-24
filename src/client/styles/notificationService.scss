@@ -1,12 +1,12 @@
 .borealisNotificationContainer {
-    position: fixed;
-    right: 0px;
-    bottom: 48px;
-    z-index: 9999999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column-reverse;
+  position: fixed;
+  right: 0px;
+  bottom: 48px;
+  z-index: 9999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column-reverse;
 }
 
 .borealisNotification {
@@ -18,8 +18,17 @@
   margin: 10px 0px;
 
   .icon {
-    width: 40px;
-    padding: 2px;
+    width: 134px;
+    height: 100%;
+    position: relative;
+
+    svg {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 90%;
+      transform: translateX(-50%) translateY(-50%);
+    }
   }
 
   .message {

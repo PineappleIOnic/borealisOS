@@ -28,6 +28,12 @@ module.exports = class Spotify extends BorealisPlugin {
   }
 
   async login (data) {
+    if (data.error) {
+      console.error(data.error)
+      window.__BOREALIS__.notificationService.createNotification('Spotify', `An error occured while logging in, err: ${data["error_description"]}`, null, 5000)
+      return
+    }
+
     this.config.authenticationData = data
 
     // Reinitialise player with new auth data.
