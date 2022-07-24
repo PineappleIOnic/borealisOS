@@ -1,6 +1,6 @@
 [Unit]
 Description=BorealisOS
-Documentation=https://github.com/pineappleionic/BorealisOS
+Documentation=https://github.com/borealisOS/BorealisOS
 After=network.target
 
 [Service]

@@ -36,7 +36,7 @@ __BorealisOS requires CEF Debugging to be enabled within the Developer settings_
 If you still want to install BorealisOS, you can do so by running the following command:
 
 ```sh
-curl -s -L https://github.com/PineappleIOnic/BorealisOS/raw/main/install.sh | sudo sh
+curl -s -L https://github.com/borealisOS/borealisOS/raw/main/install.sh | sudo sh
 ```
 
 This installer installs a service for borealisOS which will make it autolaunch on start up, you can disable this by running the following command:
@@ -48,7 +48,7 @@ sudo systemctl disable borealis
 You can also uninstall borealisOS by running the following command:
 
 ```sh
-curl -s -L https://github.com/PineappleIOnic/BorealisOS/raw/main/uninstall.sh | sudo sh
+curl -s -L https://github.com/borealisOS/borealisOS/raw/main/uninstall.sh | sudo sh
 ```
 
 

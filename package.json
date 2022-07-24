@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PineappleIOnic/borealisOS.git"
+    "url": "git+https://github.com/borealisOS/borealisOS.git"
   },
   "author": "Bradley Schofied <ionicisere@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/PineappleIOnic/borealisOS/issues"
+    "url": "https://github.com/borealisOS/borealisOS/issues"
   },
-  "homepage": "https://github.com/PineappleIOnic/borealisOS#readme",
+  "homepage": "https://github.com/borealisOS/borealisOS#readme",
   "dependencies": {
     "@babel/core": "^7.18.2",
     "@babel/preset-react": "^7.16.7",

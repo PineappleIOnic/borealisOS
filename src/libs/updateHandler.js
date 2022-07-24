@@ -10,7 +10,7 @@ module.exports = class UpdateHandler {
 
   async getLatestRelease () {
     return new Promise((resolve, reject) => {
-      fetch('https://api.github.com/repos/PineappleIOnic/borealisOS/releases/latest')
+      fetch('https://api.github.com/repos/borealisOS/borealisOS/releases/latest')
         .then((data) => data.json())
         .then(data => resolve(data))
         .catch(err => {

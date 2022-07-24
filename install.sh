@@ -38,7 +38,7 @@ systemctl disable borealis 2> /dev/null
 rm -f /etc/systemd/system/borealis.service
 
 # Clone BorealisOS
-curl -L https://github.com/PineappleIOnic/BorealisOS/tarball/main | tar -xz -C /home/deck/.local/share/borealisOS --strip-components=1
+curl -L https://github.com/borealisOS/borealisOS/tarball/main | tar -xz -C /home/deck/.local/share/borealisOS --strip-components=1
 
 # Install NodeJS
 curl -L https://nodejs.org/dist/v16.14.2/node-v16.14.2-linux-x64.tar.xz --output /home/deck/.local/share/borealisOS/node-v16.14.2-linux-x64.tar.xz
