@@ -20,7 +20,7 @@ function generateUILib (injector) {
   const steamInstall = injector.detectSteamInstall()
 
   const currentSpData = fs.readFileSync(resolve(steamInstall, 'steamui/sp.js'))
-  const oldSpHash = global.keystore.readKey('spHash') || ''
+  const oldSpHash = global.borealisData.readKey('spHash') || ''
 
   let currentSpHash = crypto.createHash('sha256')
   currentSpHash = (currentSpHash.update(currentSpData)).digest('hex')
