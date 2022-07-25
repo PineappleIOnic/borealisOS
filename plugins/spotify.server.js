@@ -18,8 +18,13 @@ module.exports = class Spotify extends BorealisPluginServer {
   async main () {
     // This is a main initialization thread for your plugin. You can do anything here.
     const express = require('express')
-    this.config.spotify_client_id = process.env.SPOTIFY_CLIENT_ID
-    this.config.spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET
+    if (!this.config.spotify_client_id) {
+      this.config.spotify_client_id = process.env.SPOTIFY_CLIENT_ID
+    }
+
+    if (!this.config.spotify_client_secret) {
+      this.config.spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET
+    }
 
     const app = express()
 
@@ -38,13 +43,17 @@ module.exports = class Spotify extends BorealisPluginServer {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: requestParams
-        }).then(data => { if (data.ok) { return data.json() } else { throw new Error(data.json().error.message) } })
+        })
+        .then(data => data.json())
+        .then(data => { if (data.access_token) { return data } else { throw new Error(JSON.stringify(data)) } })
 
         const profileResponse = await fetch('https://api.spotify.com/v1/me', {
           headers: {
             Authorization: `Bearer ${tokenResponse.access_token}`
           }
-        }).then(data => { if (data.ok) { return data.json() } else { throw new Error(data.json().error.message) } })
+        })
+        .then(data => data.json())
+        .then(data => { if (data.display_name) { return data } else { throw new Error(JSON.stringify(data)) } })
 
         logger.info('Successfully authenticated with Spotify!')
 
@@ -54,7 +63,7 @@ module.exports = class Spotify extends BorealisPluginServer {
           ...profileResponse
         })
       } catch (err) {
-        logger.error(`Failed to authenticate with Spotify!, Err: ${err}`)
+        logger.error(`Failed to authenticate with Spotify!, ${err}`)
         throw new Error('Authentication Failed. Did you remember to set your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables? Check your borealisOS logs for more info.')
       }
     })
